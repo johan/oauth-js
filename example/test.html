@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>OAuth JavaScript test</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Rod Begbie">
+	
+	<script src="../oauth.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../sha1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="jquery-1.2.1.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready(function() {
+			$("#gensig").click(function() {
+				var oauth = new OAuth();
+				oauth.consumer_key = $("#consumer_key").val();
+				oauth.consumer_secret = $("#consumer_secret").val();
+				$("#oauth_consumer_key").val(oauth.consumer_key);
+
+				oauth.updateTimestamp();
+				$("#oauth_timestamp").val(oauth.timestamp);
+				$("#oauth_nonce").val(oauth.nonce);
+				$("#oauth_version").val(oauth.version);
+				$("#oauth_signature_method").val(oauth.signature_method);
+
+				url = $("#request_token_url").val();
+				$("#formrequesttoken").attr("action", url);
+
+				$("#oauth_signature").val(oauth.getSignature($("#formrequesttoken").attr("method"),
+															 url, {}));
+				return false;
+			});
+			
+			$("#authorize").click(function() {
+				var oauth = new OAuth();
+				oauth.parseTokens($("#unauthorized_token").val());
+				url = $("#authorize_url").val() + "?oauth_token=" + oauth.token;
+				$("#authorize").attr("href", url);
+			});
+
+			$("#gensig2").click(function() {
+				var oauth = new OAuth();
+				oauth.consumer_key = $("#consumer_key").val();
+				oauth.consumer_secret = $("#consumer_secret").val();
+				$("#oauth_consumer_key2").val(oauth.consumer_key)
+
+				oauth.parseTokens($("#unauthorized_token").val());
+				$("#oauth_token2").val(oauth.token);
+				
+				oauth.updateTimestamp();
+				$("#oauth_timestamp2").val(oauth.timestamp);
+				$("#oauth_nonce2").val(oauth.nonce);
+				$("#oauth_version2").val(oauth.version);
+				$("#oauth_signature_method3").val(oauth.signature_method);
+
+				url = $("#access_token_url").val();
+				$("#formauthorizetoken").attr("action", url);
+
+				$("#oauth_signature2").val(oauth.getSignature($("#formauthorizetoken").attr("method"),
+				 											  url, {}));
+				return false;
+			});
+			
+			$("#gensig3").click(function() {
+				var oauth = new OAuth();
+				oauth.consumer_key = $("#consumer_key").val();
+				oauth.consumer_secret = $("#consumer_secret").val();
+				$("#oauth_consumer_key3").val(oauth.consumer_key);
+
+				oauth.parseTokens($("#authorized_token").val());
+				$("#oauth_token3").val(oauth.token);
+
+				oauth.updateTimestamp();
+				$("#oauth_timestamp3").val(oauth.timestamp);
+				$("#oauth_nonce3").val(oauth.nonce);
+				$("#oauth_version3").val(oauth.version);
+				$("#oauth_signature_method3").val(oauth.signature_method);
+
+				url = $("#endpoint_url").val();
+				$("#formdosomething").attr("action", url);
+
+				$("#oauth_signature3").val(oauth.getSignature($("#formdosomething").attr("method"),
+															  url, {"status": $("#status").val(),
+																	"id": $("#id").val(),
+																	}));
+
+				return false;
+			});
+			
+		});
+		
+	</script>
+</head>
+<body>
+	
+<h2>Settings</h2>
+
+<p>
+	<b>Consumer Key</b> <input type="text" value="key" id="consumer_key"><br>
+	<b>Consumer Secret</b> <input type="text" value="secret" id="consumer_secret"><br>
+	<b>Request Token URL</b> <input type="text" value="http://term.ie/oauth/example/request_token.php" id="request_token_url"><br>
+	<b>User Authorization URL</b> <input type="text" name="authorize_url" value="" id="authorize_url"><br>
+	<b>Access Token URL</b> <input type="text" name="access_token_url" value="http://term.ie/oauth/example/access_token.php" id="access_token_url"><br>
+	<b>API Endpoint URL</b> <input type="text" name="endpoint_url" value="http://term.ie/oauth/example/echo_api.php" id="endpoint_url"><br>
+</p>
+
+<!--
+
+<p>
+	<b>Consumer Key</b> <input type="text" value="" id="consumer_key"><br>
+	<b>Consumer Secret</b> <input type="text" value="" id="consumer_secret"><br>
+	<b>Request Token URL</b> <input type="text" value="http://twitter.com/oauth/request_token" id="request_token_url"><br>
+	<b>User Authorization URL</b> <input type="text" name="authorize_url" value="http://twitter.com/oauth/authorize" id="authorize_url"><br>
+	<b>Access Token URL</b> <input type="text" name="access_token_url" value="http://twitter.com/oauth/access_token" id="access_token_url"><br>
+	<b>API Endpoint URL</b> <input type="text" name="endpoint_url" value="http://twitter.com/statuses/update.xml" id="endpoint_url"><br>
+</p>
+
+<p>
+	<b>Consumer Key</b> <input type="text" value="" id="consumer_key"><br>
+	<b>Consumer Secret</b> <input type="text" value="" id="consumer_secret"><br>
+	<b>Request Token URL</b> <input type="text" value="http://ma.gnolia.com/oauth/get_request_token" id="request_token_url"><br>
+	<b>User Authorization URL</b> <input type="text" name="authorize_url" value="http://ma.gnolia.com/oauth/authorize" id="authorize_url"><br>
+	<b>Access Token URL</b> <input type="text" name="access_token_url" value="http://ma.gnolia.com/oauth/get_access_token" id="access_token_url"><br>
+	<b>API Endpoint URL</b> <input type="text" name="endpoint_url" value="http://ma.gnolia.com/api/rest/2/bookmarks_get" id="endpoint_url"><br>
+</p>
+
+-->
+
+<h2>Get Unauthorized Token</h2>
+
+<form method="get" accept-charset="utf-8" id="formrequesttoken" target="oauthtarget">
+	<b>Consumer Key</b> <input type="text" name="oauth_consumer_key" value="" id="oauth_consumer_key"><br>
+	<b>Signature Method</b> <input type="text" name="oauth_signature_method" value="" id="oauth_signature_method"><br>
+	<b>Timestamp</b> <input type="text" name="oauth_timestamp" value="" id="oauth_timestamp">
+	<b>Nonce</b> <input type="text" name="oauth_nonce" value="" id="oauth_nonce"><br>
+	<b>Signature</b> <input type="text" name="oauth_signature" value="" id="oauth_signature"><br>
+	<b>Version</b> <input type="text" name="oauth_version" value="" id="oauth_version"><br>
+	
+	<p><a href="#" id="gensig">Generate Sig</a> then <input type="submit" value="Request Token &rarr;"></p>
+	
+</form>
+
+<h2>Authorize</h2>
+
+<p><b>Unauthorized Token Response</b> <input type="text" value="" id="unauthorized_token"></p>
+
+<p><a href="#" id="authorize" target="oauthtarget">Authorize Request</a></p>
+
+<h2>Get Authorized Token</h2>
+
+<form method="post" accept-charset="utf-8" id="formauthorizetoken" target="oauthtarget">
+	<b>Consumer Key</b> <input type="text" name="oauth_consumer_key" value="" id="oauth_consumer_key2"><br>
+	<b>Token</b> <input type="text" name="oauth_token" value="" id="oauth_token2"><br>
+	<b>Signature Method</b> <input type="text" name="oauth_signature_method" value="" id="oauth_signature_method2"> <br>
+	<b>Timestamp</b> <input type="text" name="oauth_timestamp" value="" id="oauth_timestamp2">
+	<b>Nonce</b> <input type="text" name="oauth_nonce" value="" id="oauth_nonce2"><br>
+	<b>Signature</b> <input type="text" name="oauth_signature" value="" id="oauth_signature2"><br>
+	<b>Version</b> <input type="text" name="oauth_version" value="" id="oauth_version2"><br>
+	
+
+	<p><a href="#" id="gensig2">Generate Sig</a> then <input type="submit" value="Get Access Token &rarr;"></p>
+</form>
+	
+<h2>Do something!</h2>
+
+<p><b>Authorized Token Response</b> <input type="text" value="" id="authorized_token"></p>
+
+<form method="get" accept-charset="utf-8" id="formdosomething" target="oauthtarget">
+	<b>Consumer Key</b> <input type="text" name="oauth_consumer_key" value="" id="oauth_consumer_key3"><br>
+	<b>Token</b> <input type="text" name="oauth_token" value="" id="oauth_token3"><br>
+	<b>Signature Method</b> <input type="text" name="oauth_signature_method" value="" id="oauth_signature_method3"> <br>
+	<b>Timestamp</b> <input type="text" name="oauth_timestamp" value="" id="oauth_timestamp3">
+	<b>Nonce</b> <input type="text" name="oauth_nonce" value="" id="oauth_nonce3"><br>
+	<b>Signature</b> <input type="text" name="oauth_signature" value="" id="oauth_signature3"> <br>
+	<b>Version</b> <input type="text" name="oauth_version" value="" id="oauth_version3"><br>
+	<b>Status</b> <input type="text" name="status" id="status"> (used by Twitter endpoint)<br> 
+	<b>ID</b> <input type="text" name="id" id="id"> (used by Ma.gnolia endpoint)<br> 
+	
+
+	<p><a href="#" id="gensig3">Generate Sig</a> then <input type="submit" value="GO! &rarr;"></p>
+</form>
+	
+	
+</body>
+</html>

@@ -19,7 +19,10 @@ by Cross-Domain XmlHttpRequest.
 WITH THAT SAID...
 =================
 
-There are an increasing number of platforms which use JavaScript as their language, but enable the programmer to access remote sites. Examples include Google Gadgets, and Microsoft Vista Sidebar.  For those platforms, this library should come in handy.
+There are an increasing number of platforms which use JavaScript as
+their language, but enable the programmer to access remote sites.
+Examples include Google Gadgets, and Microsoft Vista Sidebar. For those
+platforms, this library should come in handy.
 
 
 

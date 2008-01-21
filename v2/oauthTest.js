@@ -60,7 +60,7 @@ function testGetBaseString() {
             alert(e);
         }
     }
-    alert("tested OAuth.SignatureMethod.getBaseString");
+    // alert("tested OAuth.SignatureMethod.getBaseString");
 }
 
 var SIGNATURES =
@@ -94,5 +94,5 @@ function testGetSignature() {
             alert(label + ": " + e);
         }
     }
-    alert("tested OAuth.SignatureMethod.getSignature");
+    // alert("tested OAuth.SignatureMethod.getSignature");
 }

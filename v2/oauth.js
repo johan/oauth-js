@@ -16,15 +16,18 @@
 
 // Here's some JavaScript software that's useful for implementing OAuth.
 
-var OAuth = {};
+// The HMAC-SHA1 signature method calls functions defined by
+// http://pajhome.org.uk/crypt/md5/sha1.js
 
-OAuth.declare = function(scope, members) {
-    for (name in members) {
-        scope[name] = members[name];
+var OAuth; if (OAuth == null) OAuth = {};
+
+OAuth.setProperties = function setProperties(into, from) {
+    for (key in from) {
+        into[key] = from[key];
     }
 }
 
-OAuth.declare(OAuth, { // class members
+OAuth.setProperties(OAuth, { // class members
 
     percentEncode: function(s) {
         if (s == null) {
@@ -104,7 +107,9 @@ OAuth.declare(OAuth, { // class members
 
     decodeForm: function(form) {
         var list = [];
-        for (nvp in form.split('&')) {
+        var nvps = form.split('&');
+        for (n in nvps) {
+            var nvp = nvps[n];
             var equals = nvp.indexOf('=');
             var name;
             var value;
@@ -191,7 +196,7 @@ OAuth.declare(OAuth, { // class members
 OAuth.SignatureMethod = function () {
 }
 
-OAuth.declare(OAuth.SignatureMethod.prototype, { // instance members
+OAuth.setProperties(OAuth.SignatureMethod.prototype, { // instance members
 
     /** Add a signature to the message. */
     sign: function(message) {
@@ -207,7 +212,7 @@ OAuth.declare(OAuth.SignatureMethod.prototype, { // instance members
 });
 
 // Class members:
-OAuth.declare(OAuth.SignatureMethod, { // class members
+OAuth.setProperties(OAuth.SignatureMethod, { // class members
 
     /** Instantiate a SignatureMethod for the given methodName. */
     newMethod: function(methodName, accessor) {

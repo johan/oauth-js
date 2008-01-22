@@ -20,7 +20,7 @@
 // http://pajhome.org.uk/crypt/md5/sha1.js
 
 /* An OAuth message is represented like this:
-   {action: method: "GET", "http://server.com/path", parameters: ...}
+   {method: "GET", action: "http://server.com/path", parameters: ...}
 
    The parameters may be either a map {name: value, name2: value2}
    or an Array of name-value pairs [[name, value], [name2, value2]].

@@ -21,7 +21,7 @@ var OAUTH_A_BASE_STRING = "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"
     + "file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal";
 
 var BASES = //
-    // label, HTTP method, URL, parameters, expected
+    // label, HTTP method, action, parameters, expected
     { "simple"         : ["GET", "http://example.com", {n: "v"}, "GET&http%3A%2F%2Fexample.com&n%3Dv" ]
     , "OAuth A request": ["POST", "https://photos.example.net/request_token",
             { oauth_version: "1.0", oauth_consumer_key: "dpf43f3p2l4k3l03"
@@ -44,15 +44,11 @@ function testGetBaseString() {
         try {
             var base = BASES[label];
             var b = 0;
-            var httpMethod = base[b++];
-            var URL = base[b++];
+            var method = base[b++];
+            var action = base[b++];
             var parameters = base[b++];
             var expected = base[b++];
-            var list = [];
-            for (p in parameters) {
-                list.push([p, parameters[p]]);
-            }
-            var actual = OAuth.SignatureMethod.getBaseString({httpMethod: httpMethod, URL: URL, parameters: list});
+            var actual = OAuth.SignatureMethod.getBaseString({method: method, action: action, parameters: parameters});
             if (expected != actual) {
                 alert(label + "\n" + actual + " (actual)\n" + expected + " (expected)");
             }

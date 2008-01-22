@@ -19,15 +19,24 @@
 // The HMAC-SHA1 signature method calls functions defined by
 // http://pajhome.org.uk/crypt/md5/sha1.js
 
+/* An OAuth message is represented like this:
+   {action: method: "GET", "http://server.com/path", parameters: ...}
+
+   The parameters may be either a map {name: value, name2: value2}
+   or an Array of name-value pairs [[name, value], [name2, value2]].
+   The latter representation is more powerful: it supports parameters
+   in a specific sequence, or several parameters with the same name;
+   for example [["a", 1], ["b", 2], ["a", 3]].
+ */
 var OAuth; if (OAuth == null) OAuth = {};
 
 OAuth.setProperties = function setProperties(into, from) {
-    for (key in from) {
+    for (var key in from) {
         into[key] = from[key];
     }
 }
 
-OAuth.setProperties(OAuth, { // class members
+OAuth.setProperties(OAuth, { // utility functions
 
     percentEncode: function(s) {
         if (s == null) {
@@ -35,10 +44,11 @@ OAuth.setProperties(OAuth, { // class members
         }
         if (s instanceof Array) {
             var e = "";
-            for (i = 0; i < s.length; ++i) {
+            for (var i in s) {
                 if (e != "") e += '&';
                 e += percentEncode(s[i]);
             }
+            return e;
         }
         s = encodeURIComponent(s);
         // Now replace the values which encodeURIComponent doesn't do
@@ -53,53 +63,55 @@ OAuth.setProperties(OAuth, { // class members
         return s;
     },
 
-    decodePercent: function(s) {
-        return decodeURIComponent(s);
-    },
+    decodePercent: decodeURIComponent,
 
     getParameterList: function(parameters) {
         if (parameters == null) {
-            return [];
+            return null;
         }
-        if (typeof parameters == "object") {
-            if (parameters instanceof Array) {
-                return parameters;
-            }
-            var list = [];
-            for (p in parameters) {
-                list.push([p, parameters[p]]);
-            }
-            return list;
+        if (typeof parameters != "object") {
+            return decodeForm(parameters + "");
         }
-        return decodeForm(parameters + "");
+        if (parameters instanceof Array) {
+            return parameters;
+        }
+        var list = [];
+        for (var p in parameters) {
+            list.push([p, parameters[p]]);
+        }
+        return list;
     },
 
     getParameterMap: function(parameters) {
         if (parameters == null) {
-            return {};
+            return null;
         }
-        if (typeof parameters == "object") {
-            if (parameters instanceof Array) {
-                var map = {};
-                for (p = 0; p < parameters.length; ++p) {
-                    map[parameters[p][0]] = parameters[p][1];
+        if (typeof parameters != "object") {
+            return getParameterMap(decodeForm(parameters + ""));
+        }
+        if (parameters instanceof Array) {
+            var map = {};
+            for (var p in parameters) {
+                var key = parameters[p][0];
+                if (map[key] === undefined) { // first value wins
+                    map[key] = parameters[p][1];
                 }
-                return map;
             }
-            return parameters;
+            return map;
         }
-        return toParameterMap(decodeForm(parameters + ""));
+        return parameters;
     },
 
     formEncode: function(parameters) {
         var form = "";
         var list = OAuth.getParameterList(parameters);
         if (list != null) {
-            var first = true;
-            for (p = 0; p < list.length; ++p) {
+            for (var p in list) {
+                var value = list[p][1];
+                if (value == null) value = "";
                 if (form != "") form += '&';
                 form += OAuth.percentEncode(list[p][0])
-                  +'='+ OAuth.percentEncode(list[p][1]);
+                  +'='+ OAuth.percentEncode(value);
             }
         }
         return form;
@@ -108,7 +120,7 @@ OAuth.setProperties(OAuth, { // class members
     decodeForm: function(form) {
         var list = [];
         var nvps = form.split('&');
-        for (n in nvps) {
+        for (var n in nvps) {
             var nvp = nvps[n];
             var equals = nvp.indexOf('=');
             var name;
@@ -128,17 +140,17 @@ OAuth.setProperties(OAuth, { // class members
     setParameter: function(message, name, value) {
         var parameters = message.parameters;
         if (parameters instanceof Array) {
-            for (var p = 0; p < parameters.length; ++p) {
+            for (var p in parameters) {
                 if (parameters[p][0] == name) {
-                    if (value == null) {
+                    if (value === undefined) {
                         parameters.splice(p, 1);
                     } else {
                         parameters[p][1] = value;
-                        value = null;
+                        value = undefined;
                     }
                 }
             }
-            if (value != null) {
+            if (value !== undefined) {
                 parameters.push([name, value]);
             }
         } else {
@@ -150,7 +162,7 @@ OAuth.setProperties(OAuth, { // class members
 
     setParameters: function(message, parameters) {
         var list = OAuth.getParameterList(parameters);
-        for (var i = 0; i < list.length; ++i) {
+        for (var i in list) {
             OAuth.setParameter(message, list[i][0], list[i][1]);
         }
     },
@@ -160,24 +172,7 @@ OAuth.setProperties(OAuth, { // class members
         OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
     },
 
-    timestamp: function() {
-        var d = new Date();
-        return Math.floor(d.getTime()/1000);
-    },
-
-    _NONCE_CHARS: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
-
-    nonce: function(length) {
-        var chars = OAuth._NONCE_CHARS;
-        var result = "";
-        for (var i=0; i<length; i++) {
-            var rnum = Math.floor(Math.random() * chars.length);
-            result += chars.substring(rnum, rnum+1);
-        }
-        return result;
-    },
-
-    addParameters: function(url, parameters) {
+    addToURL: function(url, parameters) {
         newURL = url;
         if (parameters != null) {
             var toAdd = OAuth.formEncode(parameters);
@@ -190,17 +185,36 @@ OAuth.setProperties(OAuth, { // class members
         }
         return newURL;
     },
+
+    timestamp: function() {
+        var d = new Date();
+        return Math.floor(d.getTime()/1000);
+    },
+
+    nonce: function(length) {
+        var chars = OAuth.nonce.CHARS;
+        var result = "";
+        for (var i = 0; i < length; ++i) {
+            var rnum = Math.floor(Math.random() * chars.length);
+            result += chars.substring(rnum, rnum+1);
+        }
+        return result;
+    },
 });
 
+OAuth.nonce.CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+
 /** An abstract algorithm for signing messages. */
-OAuth.SignatureMethod = function () {
+OAuth.SignatureMethod = function OAuthSignatureMethod() {
 }
 
 OAuth.setProperties(OAuth.SignatureMethod.prototype, { // instance members
 
     /** Add a signature to the message. */
     sign: function(message) {
-        OAuth.setParameter(message, "oauth_signature", this.getSignature(OAuth.SignatureMethod.getBaseString(message)));
+        var signature = this.getSignature(OAuth.SignatureMethod.getBaseString(message));
+        OAuth.setParameter(message, "oauth_signature", signature);
+        return signature; // just in case someone's interested
     },
 
     /** Get the key string for signing. */
@@ -215,12 +229,18 @@ OAuth.setProperties(OAuth.SignatureMethod.prototype, { // instance members
 OAuth.setProperties(OAuth.SignatureMethod, { // class members
 
     /** Instantiate a SignatureMethod for the given methodName. */
+    sign: function(message, accessor) {
+        var methodName = OAuth.getParameterMap(message.parameters).oauth_signature_method;
+        OAuth.SignatureMethod.newMethod(methodName, accessor).sign(message);
+    },
+
+    /** Instantiate a SignatureMethod for the given methodName. */
     newMethod: function(methodName, accessor) {
         var constructor = OAuth.SignatureMethod.REGISTERED[methodName];
         if (constructor == null) {
             var err = new Error("signature_method_rejected");
             var acceptable = "";
-            for (name in OAuth.SignatureMethod.REGISTERED) {
+            for (var name in OAuth.SignatureMethod.REGISTERED) {
                 if (acceptable != "") acceptable += '&';
                 acceptable += OAuth.percentEncode(name);
             }
@@ -237,45 +257,41 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
     REGISTERED : {},
 
     /** Subsequently, the given constructor will be used for the given method. */
-    registerMethodClass: function(oauth_signature_method, constructor) {
-        OAuth.SignatureMethod.REGISTERED[oauth_signature_method] = constructor;
+    registerMethodClass: function(methodName, constructor) {
+        OAuth.SignatureMethod.REGISTERED[methodName] = constructor;
     },
 
     /** Create a subclass of OAuth.SignatureMethod, with the given getSignature function. */
     makeSubclass: function(getSignatureFunction) {
-        getSignatureFunction.tag = "getSignature";
-        var subclass = function() {
-            this.superclass();
+        var subclass = function subclassOfSignatureMethod() {
+            this.superClass();
         }; 
-        subclass.tag = "extends OAuth.SignatureMethod";
         subclass.prototype = new OAuth.SignatureMethod();
-        subclass.prototype.superclass = OAuth.SignatureMethod;
+        subclass.prototype.superClass = OAuth.SignatureMethod;
         subclass.prototype.constructor = subclass;
-        // Delete properties inherited from superclass:
+        // Delete properties inherited from superClass:
         // delete ... There aren't any.
-        // Since the prototype object was created with the superclass constructor,
-        // it has a constructor property that refers to that constructor.  But
-        // we want subclass instancess to have a different constructor
-        // property, so we've got to reassign this default constructor property.
         subclass.prototype.getSignature = getSignatureFunction;
         return subclass;
     },
 
     getBaseString: function(message) {
+        var URL = message.action;
+        var q = URL.indexOf('?');
         var parameters;
-        var q = message.URL.indexOf('?');
         if (q < 0) {
             parameters = message.parameters;
         } else {
             // Combine the URL query string with the other parameters:
-            parameters = OAuth.decodeForm(message.URL.substring(q + 1));
+            parameters = OAuth.decodeForm(URL.substring(q + 1));
             var toAdd = OAuth.getParameterList(message.parameters);
-            for (p = 0; p < toAdd.length; ++p) {
-                parameters.push(toAdd[p]);
+            for (var a in toAdd) {
+                parameters.push(toAdd[a]);
             }
+            URL = URL.substring(0, q);
         }
-        return OAuth.percentEncode(message.httpMethod.toUpperCase())
-         +'&'+ OAuth.percentEncode(message.URL)
+        return OAuth.percentEncode(message.method.toUpperCase())
+         +'&'+ OAuth.percentEncode(URL)
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeParameters(parameters));
     },
 
@@ -283,12 +299,12 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
         if (parameters == null) {
             return "";
         }
-        var list = OAuth.getParameterList(parameters);
         var norm = [];
-        for (p = 0; p < list.length; ++p) {
-            var name = list[p][0];
-            if (name != "oauth_signature") {
-                norm.push(list[p]);
+        var list = OAuth.getParameterList(parameters);
+        for (var p in list) {
+            var nvp = list[p];
+            if (nvp[0] != "oauth_signature") {
+                norm.push(nvp);
             }
         }
         norm.sort(function(a,b) {
@@ -303,15 +319,15 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
 });
 
 OAuth.SignatureMethod.registerMethodClass("PLAINTEXT",
-        OAuth.SignatureMethod.makeSubclass(
-        function(baseString) { // getSignature
+    OAuth.SignatureMethod.makeSubclass(
+        function getSignature(baseString) {
             return this.getKey();
         }
     ));
 
 OAuth.SignatureMethod.registerMethodClass("HMAC-SHA1",
-        OAuth.SignatureMethod.makeSubclass(
-        function(baseString) { // getSignature
+    OAuth.SignatureMethod.makeSubclass(
+        function getSignature(baseString) {
             b64pad = '=';
             var signature = b64_hmac_sha1(this.getKey(), baseString);
             return signature;

@@ -92,7 +92,7 @@ function OAuth() {
     	paramArray = new Array();
     	for (i=0; i < keys.length; i++) {
 		    key = keys[i];
-		    paramArray.push(_oauthEncode(key + "=" + oauthParams[key]));
+		    paramArray.push(_oauthEncode(_oauthEncode(key) + "=" + _oauthEncode(oauthParams[key])));
     	}
     	paramstring = paramArray.join(encodeURIComponent("&"));
 	

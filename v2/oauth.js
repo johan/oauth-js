@@ -36,9 +36,9 @@ OAuth.setProperties = function setProperties(into, from) {
     }
 }
 
-OAuth.setProperties(OAuth, { // utility functions
+OAuth.setProperties(OAuth, // utility functions
 
-    percentEncode: function(s) {
+  { percentEncode: function(s) {
         if (s == null) {
             return "";
         }
@@ -61,11 +61,11 @@ OAuth.setProperties(OAuth, { // utility functions
         s = s.replace("(", "%28", "g");
         s = s.replace(")", "%29", "g");
         return s;
-    },
+    }
 
-    decodePercent: decodeURIComponent,
+  , decodePercent: decodeURIComponent
 
-    getParameterList: function(parameters) {
+  , getParameterList: function(parameters) {
         if (parameters == null) {
             return null;
         }
@@ -80,9 +80,9 @@ OAuth.setProperties(OAuth, { // utility functions
             list.push([p, parameters[p]]);
         }
         return list;
-    },
+    }
 
-    getParameterMap: function(parameters) {
+  , getParameterMap: function(parameters) {
         if (parameters == null) {
             return null;
         }
@@ -100,9 +100,9 @@ OAuth.setProperties(OAuth, { // utility functions
             return map;
         }
         return parameters;
-    },
+    }
 
-    formEncode: function(parameters) {
+  , formEncode: function(parameters) {
         var form = "";
         var list = OAuth.getParameterList(parameters);
         if (list != null) {
@@ -115,9 +115,9 @@ OAuth.setProperties(OAuth, { // utility functions
             }
         }
         return form;
-    },
+    }
 
-    decodeForm: function(form) {
+  , decodeForm: function(form) {
         var list = [];
         var nvps = form.split('&');
         for (var n in nvps) {
@@ -135,9 +135,9 @@ OAuth.setProperties(OAuth, { // utility functions
             list.push([name, value]);
         }
         return list;
-    },
+    }
 
-    setParameter: function(message, name, value) {
+  , setParameter: function(message, name, value) {
         var parameters = message.parameters;
         if (parameters instanceof Array) {
             for (var p in parameters) {
@@ -158,21 +158,21 @@ OAuth.setProperties(OAuth, { // utility functions
             parameters[name] = value;
             message.parameters = parameters;
         }
-    },
+    }
 
-    setParameters: function(message, parameters) {
+  , setParameters: function(message, parameters) {
         var list = OAuth.getParameterList(parameters);
         for (var i in list) {
             OAuth.setParameter(message, list[i][0], list[i][1]);
         }
-    },
+    }
 
-    setTimestampAndNonce: function(message) {
+  , setTimestampAndNonce: function(message) {
         OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
         OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
-    },
+    }
 
-    addToURL: function(url, parameters) {
+  , addToURL: function(url, parameters) {
         newURL = url;
         if (parameters != null) {
             var toAdd = OAuth.formEncode(parameters);
@@ -184,14 +184,14 @@ OAuth.setProperties(OAuth, { // utility functions
             }
         }
         return newURL;
-    },
+    }
 
-    timestamp: function() {
+  , timestamp: function() {
         var d = new Date();
         return Math.floor(d.getTime()/1000);
-    },
+    }
 
-    nonce: function(length) {
+  , nonce: function(length) {
         var chars = OAuth.nonce.CHARS;
         var result = "";
         for (var i = 0; i < length; ++i) {
@@ -199,7 +199,7 @@ OAuth.setProperties(OAuth, { // utility functions
             result += chars.substring(rnum, rnum+1);
         }
         return result;
-    },
+    }
 });
 
 OAuth.nonce.CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
@@ -208,34 +208,34 @@ OAuth.nonce.CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwx
 OAuth.SignatureMethod = function OAuthSignatureMethod() {
 }
 
-OAuth.setProperties(OAuth.SignatureMethod.prototype, { // instance members
+OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
 
     /** Add a signature to the message. */
-    sign: function(message) {
+  { sign: function(message) {
         var signature = this.getSignature(OAuth.SignatureMethod.getBaseString(message));
         OAuth.setParameter(message, "oauth_signature", signature);
         return signature; // just in case someone's interested
-    },
+    }
 
     /** Get the key string for signing. */
-    getKey: function() {
+  , getKey: function() {
         var key = OAuth.percentEncode(this.accessor.consumerSecret)
             +"&"+ OAuth.percentEncode(this.accessor.tokenSecret);
         return key;
-    },
+    }
 });
 
 // Class members:
-OAuth.setProperties(OAuth.SignatureMethod, { // class members
+OAuth.setProperties(OAuth.SignatureMethod, // class members
 
     /** Instantiate a SignatureMethod for the given methodName. */
-    sign: function(message, accessor) {
+  { sign: function(message, accessor) {
         var methodName = OAuth.getParameterMap(message.parameters).oauth_signature_method;
         OAuth.SignatureMethod.newMethod(methodName, accessor).sign(message);
-    },
+    }
 
     /** Instantiate a SignatureMethod for the given methodName. */
-    newMethod: function(methodName, accessor) {
+  , newMethod: function(methodName, accessor) {
         var constructor = OAuth.SignatureMethod.REGISTERED[methodName];
         if (constructor == null) {
             var err = new Error("signature_method_rejected");
@@ -251,18 +251,18 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
         method.oauth_signature_method = methodName;
         method.accessor = accessor;
         return method;
-    },
+    }
 
     /** A map from signature method name to constructor. */
-    REGISTERED : {},
+  , REGISTERED : {}
 
     /** Subsequently, the given constructor will be used for the given method. */
-    registerMethodClass: function(methodName, constructor) {
+  , registerMethodClass: function(methodName, constructor) {
         OAuth.SignatureMethod.REGISTERED[methodName] = constructor;
-    },
+    }
 
     /** Create a subclass of OAuth.SignatureMethod, with the given getSignature function. */
-    makeSubclass: function(getSignatureFunction) {
+  , makeSubclass: function(getSignatureFunction) {
         var subclass = function subclassOfSignatureMethod() {
             this.superClass();
         }; 
@@ -273,9 +273,9 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
         // delete ... There aren't any.
         subclass.prototype.getSignature = getSignatureFunction;
         return subclass;
-    },
+    }
 
-    getBaseString: function(message) {
+  , getBaseString: function(message) {
         var URL = message.action;
         var q = URL.indexOf('?');
         var parameters;
@@ -293,9 +293,9 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
         return OAuth.percentEncode(message.method.toUpperCase())
          +'&'+ OAuth.percentEncode(URL)
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeParameters(parameters));
-    },
+    }
 
-    normalizeParameters: function(parameters) {
+  , normalizeParameters: function(parameters) {
         if (parameters == null) {
             return "";
         }
@@ -315,7 +315,7 @@ OAuth.setProperties(OAuth.SignatureMethod, { // class members
                       return 0;
                   });
         return OAuth.formEncode(norm);
-    },
+    }
 });
 
 OAuth.SignatureMethod.registerMethodClass("PLAINTEXT",

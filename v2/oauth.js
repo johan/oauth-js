@@ -31,9 +31,12 @@
 var OAuth; if (OAuth == null) OAuth = {};
 
 OAuth.setProperties = function setProperties(into, from) {
-    for (var key in from) {
-        into[key] = from[key];
+    if (into != null && from != null) {
+        for (var key in from) {
+            into[key] = from[key];
+        }
     }
+    return into;
 }
 
 OAuth.setProperties(OAuth, // utility functions
@@ -204,9 +207,26 @@ OAuth.setProperties(OAuth, // utility functions
 
 OAuth.nonce.CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
 
-/** An abstract algorithm for signing messages. */
-OAuth.SignatureMethod = function OAuthSignatureMethod() {
+/** Define a constructor function,
+    without causing trouble to anyone who was using it as a namespace.
+    That is, if parent[name] already existed and had properties,
+    copy those properties into the new constructor.
+ */
+OAuth.declareClass = function declareClass(parent, name, constructor) {
+    var previous = parent[name];
+    parent[name] = constructor;
+    if (constructor != null && previous != null) {
+        for (var key in previous) {
+            if (key != "prototype") {
+                constructor[key] = previous[key];
+            }
+        }
+    }
+    return constructor;
 }
+
+/** An abstract algorithm for signing messages. */
+OAuth.declareClass(OAuth, "SignatureMethod", function OAuthSignatureMethod(){});
 
 OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
 {

@@ -232,53 +232,66 @@ OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
 {
     /** Add a signature to the message. */
     sign: function(message) {
-        var signature = this.getSignature(OAuth.SignatureMethod.getBaseString(message));
+        var baseString = OAuth.SignatureMethod.getBaseString(message);
+        var signature = this.getSignature(baseString);
         OAuth.setParameter(message, "oauth_signature", signature);
         return signature; // just in case someone's interested
     }
 ,
-    /** Get the key string for signing. */
-    getKey: function() {
-        var key = OAuth.percentEncode(this.accessor.consumerSecret)
-            +"&"+ OAuth.percentEncode(this.accessor.tokenSecret);
-        return key;
+    /** Set the key string for signing. */
+    initialize: function(name, accessor) {
+        var consumerSecret;
+        if (accessor.accessorSecret != null
+            && name.length > 9
+            && name.substring(name.length-9) == "-Accessor")
+        {
+            consumerSecret = accessor.accessorSecret;
+        } else {
+            consumerSecret = accessor.consumerSecret;
+        }
+        this.key = OAuth.percentEncode(consumerSecret)
+             +"&"+ OAuth.percentEncode(accessor.tokenSecret);
     }
 });
 
+/* SignatureMethod expects an accessor object to be like this:
+   {tokenSecret: "lakjsdflkj...", consumerSecret: "QOUEWRI..", accessorSecret: "xcmvzc..."}
+   The accessorSecret property is optional.
+ */
 // Class members:
 OAuth.setProperties(OAuth.SignatureMethod, // class members
 {
-    /** Instantiate a SignatureMethod for the given methodName. */
     sign: function(message, accessor) {
-        var methodName = OAuth.getParameterMap(message.parameters).oauth_signature_method;
-        OAuth.SignatureMethod.newMethod(methodName, accessor).sign(message);
+        var name = OAuth.getParameterMap(message.parameters).oauth_signature_method;
+        OAuth.SignatureMethod.newMethod(name, accessor).sign(message);
     }
 ,
-    /** Instantiate a SignatureMethod for the given methodName. */
-    newMethod: function(methodName, accessor) {
-        var constructor = OAuth.SignatureMethod.REGISTERED[methodName];
-        if (constructor == null) {
-            var err = new Error("signature_method_rejected");
-            var acceptable = "";
-            for (var name in OAuth.SignatureMethod.REGISTERED) {
-                if (acceptable != "") acceptable += '&';
-                acceptable += OAuth.percentEncode(name);
-            }
-            err.oauth_acceptable_signature_methods = acceptable;
-            throw err;
+    /** Instantiate a SignatureMethod for the given method name. */
+    newMethod: function(name, accessor) {
+        var constructor = OAuth.SignatureMethod.REGISTERED[name];
+        if (constructor != null) {
+            var method = new constructor();
+            method.initialize(name, accessor);
+            return method;
         }
-        var method = new constructor();
-        method.oauth_signature_method = methodName;
-        method.accessor = accessor;
-        return method;
+        var err = new Error("signature_method_rejected");
+        var acceptable = "";
+        for (var r in OAuth.SignatureMethod.REGISTERED) {
+            if (acceptable != "") acceptable += '&';
+            acceptable += OAuth.percentEncode(r);
+        }
+        err.oauth_acceptable_signature_methods = acceptable;
+        throw err;
     }
 ,
     /** A map from signature method name to constructor. */
     REGISTERED : {}
 ,
     /** Subsequently, the given constructor will be used for the given method. */
-    registerMethodClass: function(methodName, constructor) {
-        OAuth.SignatureMethod.REGISTERED[methodName] = constructor;
+    registerMethodClass: function(names, constructor) {
+        for (var n in names) {
+            OAuth.SignatureMethod.REGISTERED[names[n]] = constructor;
+        }
     }
 ,
     /** Create a subclass of OAuth.SignatureMethod, with the given getSignature function. */
@@ -338,18 +351,18 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
     }
 });
 
-OAuth.SignatureMethod.registerMethodClass("PLAINTEXT",
+OAuth.SignatureMethod.registerMethodClass(["PLAINTEXT", "PLAINTEXT-Accessor"],
     OAuth.SignatureMethod.makeSubclass(
         function getSignature(baseString) {
-            return this.getKey();
+            return this.key;
         }
     ));
 
-OAuth.SignatureMethod.registerMethodClass("HMAC-SHA1",
+OAuth.SignatureMethod.registerMethodClass(["HMAC-SHA1", "HMAC-SHA1-Accessor"],
     OAuth.SignatureMethod.makeSubclass(
         function getSignature(baseString) {
             b64pad = '=';
-            var signature = b64_hmac_sha1(this.getKey(), baseString);
+            var signature = b64_hmac_sha1(this.key, baseString);
             return signature;
         }
     ));

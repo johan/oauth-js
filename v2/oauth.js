@@ -212,17 +212,17 @@ OAuth.nonce.CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwx
     That is, if parent[name] already existed and had properties,
     copy those properties into the new constructor.
  */
-OAuth.declareClass = function declareClass(parent, name, constructor) {
+OAuth.declareClass = function declareClass(parent, name, newConstructor) {
     var previous = parent[name];
-    parent[name] = constructor;
-    if (constructor != null && previous != null) {
+    parent[name] = newConstructor;
+    if (newConstructor != null && previous != null) {
         for (var key in previous) {
             if (key != "prototype") {
-                constructor[key] = previous[key];
+                newConstructor[key] = previous[key];
             }
         }
     }
-    return constructor;
+    return newConstructor;
 }
 
 /** An abstract algorithm for signing messages. */
@@ -268,9 +268,9 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
 ,
     /** Instantiate a SignatureMethod for the given method name. */
     newMethod: function(name, accessor) {
-        var constructor = OAuth.SignatureMethod.REGISTERED[name];
-        if (constructor != null) {
-            var method = new constructor();
+        var impl = OAuth.SignatureMethod.REGISTERED[name];
+        if (impl != null) {
+            var method = new impl();
             method.initialize(name, accessor);
             return method;
         }
@@ -288,9 +288,9 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
     REGISTERED : {}
 ,
     /** Subsequently, the given constructor will be used for the given method. */
-    registerMethodClass: function(names, constructor) {
+    registerMethodClass: function(names, classConstructor) {
         for (var n in names) {
-            OAuth.SignatureMethod.REGISTERED[names[n]] = constructor;
+            OAuth.SignatureMethod.REGISTERED[names[n]] = classConstructor;
         }
     }
 ,

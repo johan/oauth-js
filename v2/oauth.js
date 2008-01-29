@@ -287,7 +287,11 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
     /** A map from signature method name to constructor. */
     REGISTERED : {}
 ,
-    /** Subsequently, the given constructor will be used for the given method. */
+    /** Subsequently, the given constructor will be used for the named methods.
+        The constructor will be called with no parameters.
+        The resulting object should usually implement getSignature(baseString).
+        You can easily define such a constructor by calling makeSubclass, below.
+     */
     registerMethodClass: function(names, classConstructor) {
         for (var n in names) {
             OAuth.SignatureMethod.REGISTERED[names[n]] = classConstructor;
@@ -296,16 +300,16 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
 ,
     /** Create a subclass of OAuth.SignatureMethod, with the given getSignature function. */
     makeSubclass: function(getSignatureFunction) {
-        var subclass = function subclassOfSignatureMethod() {
-            this.superClass();
+        var superClass = OAuth.SignatureMethod;
+        var subClass = function subClassOfSignatureMethod() {
+            superClass.call(this);
         }; 
-        subclass.prototype = new OAuth.SignatureMethod();
-        subclass.prototype.superClass = OAuth.SignatureMethod;
-        subclass.prototype.constructor = subclass;
-        // Delete properties inherited from superClass:
-        // delete ... There aren't any.
-        subclass.prototype.getSignature = getSignatureFunction;
-        return subclass;
+        subClass.prototype = new superClass();
+        // Delete instance variables from prototype:
+        // delete subclass.prototype... There aren't any.
+        subClass.prototype.getSignature = getSignatureFunction;
+        subClass.prototype.constructor = subClass;
+        return subClass;
     }
 ,
     getBaseString: function(message) {

@@ -1,0 +1,28 @@
+<HTML>
+  <head>
+    <script type="text/javascript" src="../sha1.js"></script>
+    <script type="text/javascript" src="../oauth.js"></script>
+    <script type="text/javascript" src="consumer.js"></script>
+  </head>
+  <body>
+    <form name="request" method="POST" onSubmit="consumer.signForm(this, document.etc)">
+        <input type="submit" value="Get Request Token"/><br/>
+        consumer key:     <input type="text" name="oauth_consumer_key" size="64"/><br/>
+        signature method: <input type="text" name="oauth_signature_method"/><br/>
+                        <input type="hidden" name="oauth_timestamp"/>
+                        <input type="hidden" name="oauth_nonce"/>
+                        <input type="hidden" name="oauth_signature"/>
+    </form>
+    <form name="etc">
+        URL:             <input type="text" name="URL"            size="80"/><br/>
+        consumer secret: <input type="text" name="consumerSecret" size="64"/>
+                       <input type="hidden" name="tokenSecret" value=""/>
+    </form>
+    <script type="text/javascript">
+        document.etc.URL.value                        = consumer.serviceProvider.requestTokenURL;
+        document.request.oauth_signature_method.value = consumer.serviceProvider.signatureMethod;
+        document.request.oauth_consumer_key.value     = consumer.consumerKey;
+        document.etc.consumerSecret.value             = consumer.consumerSecret;
+    </script>
+  </body>
+</HTML>

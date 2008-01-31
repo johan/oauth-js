@@ -263,6 +263,10 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
 {
     sign: function(message, accessor) {
         var name = OAuth.getParameterMap(message.parameters).oauth_signature_method;
+        if (name == null || name == "") {
+            name = "HMAC-SHA1";
+            OAuth.setParameter(message, "oauth_signature_method", name);
+        }
         OAuth.SignatureMethod.newMethod(name, accessor).sign(message);
     }
 ,

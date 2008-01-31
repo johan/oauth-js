@@ -1,0 +1,19 @@
+<HTML>
+  <head>
+    <script type="text/javascript" src="consumer.js"></script>
+  </head>
+  <body>
+    <form name="request" method="GET" action="" onSubmit="this.action=document.etc.URL.value">
+        <input type="submit" value="Authorize"/><br/>
+        request token: <input type="text" name="oauth_token"    size="64"/><br/>
+        callback URL:  <input type="text" name="oauth_callback" size="80"/>
+    </form>
+    <form name="etc">
+        URL: <input type="text" name="URL" size="80"/>
+    </form>
+    <script type="text/javascript">
+        document.etc.URL.value = consumer.serviceProvider.userAuthorizationURL;
+        document.request.oauth_callback.value = document.URL.substring(0, document.URL.replace(/\\/g, '/').lastIndexOf('/') + 1) + "accessToken.html";
+    </script>
+  </body>
+</HTML>

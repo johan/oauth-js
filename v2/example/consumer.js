@@ -3,7 +3,7 @@ var termie =
 , consumerSecret: "secret"
 , serviceProvider:
   { requestTokenURL     : "http://term.ie/oauth/example/request_token.php"
-  , userAuthorizationURL: "accessToken.html"
+  , userAuthorizationURL: "accessToken.html" // a stub
   , accessTokenURL      : "http://term.ie/oauth/example/access_token.php"
   , signatureMethod     : "HMAC-SHA1"
   }

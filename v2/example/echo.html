@@ -3,11 +3,12 @@
     <script type="text/javascript" src="../sha1.js"></script>
     <script type="text/javascript" src="../oauth.js"></script>
     <script type="text/javascript" src="consumer.js"></script>
+    <script type="text/javascript" src="../../../JavaScript/outline.js"></script>
   </head>
-  <body>
+  <body onLoad="consumer.initializeForm(document.request, document.etc, 'echo')">
     <form name="request" method="POST" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Echo"/><br/>
-        message:          <input name="message"            type="text" size="64" value="Hello, world!"/><br/>
+        message:          <input name="message"            type="text" size="64" value="Hello"/><br/>
                           <input name="option" value="1"   type="checkbox">option 1<br/>
                           <input name="option" value="2"   type="checkbox">option 2<br/>
         consumer key:     <input name="oauth_consumer_key" type="text" size="64"/><br/>
@@ -18,15 +19,15 @@
                           <input name="oauth_signature"    type="hidden"/>
     </form>
     <form name="etc">
+        Service provider:
+        <select name="XXX" onChange="consumer.initializeForm(document.request, document.etc, 'echo')">
+            <option value="example">Example Provider
+            <option value="mediamatic">mediamatic.nl
+            <option value="termie" selected="true">term.ie
+        </select><br/>
         URL:              <input name="URL"                type="text" size="80"/><br/>
         consumer secret:  <input name="consumerSecret"     type="text" size="64"/><br/>
         token secret:     <input name="tokenSecret"        type="text" size="64"/>
     </form>
-    <script type="text/javascript">
-        document.etc.URL.value                        = mediamatic.serviceProvider.echoURL;
-        document.request.oauth_signature_method.value = mediamatic.serviceProvider.signatureMethod;
-        document.request.oauth_consumer_key.value     = mediamatic.consumerKey;
-        document.etc.consumerSecret.value             = mediamatic.consumerSecret;
-    </script>
   </body>
 </HTML>

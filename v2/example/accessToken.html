@@ -4,26 +4,26 @@
     <script type="text/javascript" src="../oauth.js"></script>
     <script type="text/javascript" src="consumer.js"></script>
   </head>
-  <body>
+  <body onLoad="consumer.initializeForm(document.request, document.etc, 'accessToken')">
     <form name="request" method="POST" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Get Access Token"/><br/>
         consumer key:     <input type="text" name="oauth_consumer_key" size="64"/><br/>
-        request token:    <input type="text" name="oauth_token"        size="64" value="requestkey"/><br/>
+        request token:    <input type="text" name="oauth_token"        size="64"/><br/>
         signature method: <input type="text" name="oauth_signature_method"/>
                         <input type="hidden" name="oauth_timestamp"/>
                         <input type="hidden" name="oauth_nonce"/>
                         <input type="hidden" name="oauth_signature"/>
     </form>
     <form name="etc">
+        Service provider:
+        <select name="selector" onChange="consumer.initializeForm(document.request, document.etc, 'accessToken')">
+            <option value="example">Example Provider
+            <option value="mediamatic">mediamatic.nl
+            <option value="termie" selected="true">term.ie
+        </select><br/>
         URL:             <input type="text" name="URL"            size="80"/><br/>
         consumer secret: <input type="text" name="consumerSecret" size="64"/><br/>
-        token secret:    <input type="text" name="tokenSecret"    size="64" value="requestsecret"/>
+        token secret:    <input type="text" name="tokenSecret"    size="64"/>
     </form>
-    <script type="text/javascript">
-        document.etc.URL.value                        = consumer.serviceProvider.accessTokenURL;
-        document.request.oauth_signature_method.value = consumer.serviceProvider.signatureMethod;
-        document.request.oauth_consumer_key.value     = consumer.consumerKey;
-        document.etc.consumerSecret.value             = consumer.consumerSecret;
-    </script>
   </body>
 </HTML>

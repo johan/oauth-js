@@ -1,16 +1,18 @@
-var termie =
-{ consumerKey   : "key"
-, consumerSecret: "secret"
+var consumer = {};
+
+consumer.example =
+{ consumerKey   : "myKey"
+, consumerSecret: "mySecret"
 , serviceProvider:
   { signatureMethod     : "HMAC-SHA1"
-  , requestTokenURL     : "http://term.ie/oauth/example/request_token.php"
-  , userAuthorizationURL: "accessToken.html" // a stub
-  , accessTokenURL      : "http://term.ie/oauth/example/access_token.php"
-  , echoURL             : "http://term.ie/oauth/example/echo_api.php"
+  , requestTokenURL     : "http://localhost/oauth-provider/request_token"
+  , userAuthorizationURL: "http://localhost/oauth-provider/authorize"
+  , accessTokenURL      : "http://localhost/oauth-provider/access_token"
+  , echoURL             : "http://localhost/oauth-provider/echo"
   }
 };
 
-var mediamatic =
+consumer.mediamatic =
 { consumerKey   : "e388e4f4d6f4cc10ff6dc0fd1637da370478e49e2"
 , consumerSecret: "0b062293b6e29ec91a23b2002abf88e9"
 , serviceProvider:
@@ -22,7 +24,37 @@ var mediamatic =
   }
 };
 
-var consumer = termie;
+consumer.termie =
+{ consumerKey   : "key"
+, consumerSecret: "secret"
+, accessToken: "requestkey"
+, accessTokenSecret: "requestsecret"
+, echo: "accesskey"
+, echoSecret: "accesssecret"
+, serviceProvider:
+  { signatureMethod     : "HMAC-SHA1"
+  , requestTokenURL     : "http://term.ie/oauth/example/request_token.php"
+  , userAuthorizationURL: "accessToken.html" // a stub
+  , accessTokenURL      : "http://term.ie/oauth/example/access_token.php"
+  , echoURL             : "http://term.ie/oauth/example/echo_api.php"
+  }
+};
+
+consumer.initializeForm =
+function initializeForm(form, etc, usage) {
+    var selector = etc.elements[0];
+    var selection = selector.options[selector.selectedIndex].value;
+    var selected = consumer[selection];
+    if (selected != null) {
+        etc.URL.value                     = selected.serviceProvider[usage + "URL"];
+        form.oauth_signature_method.value = selected.serviceProvider.signatureMethod;
+        form.oauth_consumer_key.value     = selected.consumerKey;
+        etc.consumerSecret.value          = selected.consumerSecret;
+        if (selected[usage] != null) form.oauth_token.value = selected[usage];
+        if (selected[usage + "Secret"] != null) etc.tokenSecret.value = selected[usage + "Secret"];
+    }
+    return true;
+};
 
 consumer.signForm =
 function signForm(form, etc) {

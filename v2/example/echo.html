@@ -3,31 +3,30 @@
     <script type="text/javascript" src="../sha1.js"></script>
     <script type="text/javascript" src="../oauth.js"></script>
     <script type="text/javascript" src="consumer.js"></script>
-    <script type="text/javascript" src="../../../JavaScript/outline.js"></script>
   </head>
   <body onLoad="consumer.initializeForm(document.request, document.etc, 'echo')">
     <form name="request" method="POST" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Echo"/><br/>
-        message:          <input name="message"            type="text" size="64" value="Hello"/><br/>
-                          <input name="option" value="1"   type="checkbox">option 1<br/>
-                          <input name="option" value="2"   type="checkbox">option 2<br/>
-        consumer key:     <input name="oauth_consumer_key" type="text" size="64"/><br/>
-        access token:     <input name="oauth_token"        type="text" size="64"/><br/>
+        message:          <input name="message"                type="text" size="64" value="Hello"/><br/>
+                          <input name="option" value="1"       type="checkbox">option 1<br/>
+                          <input name="option" value="2"       type="checkbox">option 2<br/>
+        consumer key:     <input name="oauth_consumer_key"     type="text" size="64"/><br/>
+        access token:     <input name="oauth_token"            type="text" size="64"/><br/>
         signature method: <input name="oauth_signature_method" type="text"/>
-                          <input name="oauth_timestamp"    type="hidden"/>
-                          <input name="oauth_nonce"        type="hidden"/>
-                          <input name="oauth_signature"    type="hidden"/>
+                          <input name="oauth_timestamp"        type="hidden"/>
+                          <input name="oauth_nonce"            type="hidden"/>
+                          <input name="oauth_signature"        type="hidden"/>
     </form>
     <form name="etc">
         Service provider:
-        <select name="XXX" onChange="consumer.initializeForm(document.request, document.etc, 'echo')">
+        <select name="selector" onChange="consumer.initializeForm(document.request, document.etc, 'echo')">
             <option value="example">Example Provider
             <option value="mediamatic">mediamatic.nl
             <option value="termie" selected="true">term.ie
         </select><br/>
-        URL:              <input name="URL"                type="text" size="80"/><br/>
-        consumer secret:  <input name="consumerSecret"     type="text" size="64"/><br/>
-        token secret:     <input name="tokenSecret"        type="text" size="64"/>
+        URL:              <input name="URL"                    type="text" size="80"/><br/>
+        consumer secret:  <input name="consumerSecret"         type="text" size="64"/><br/>
+        token secret:     <input name="tokenSecret"            type="text" size="64"/>
     </form>
   </body>
 </HTML>

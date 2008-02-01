@@ -7,11 +7,11 @@
   <body onLoad="consumer.initializeForm(document.request, document.etc, 'requestToken')">
     <form name="request" method="POST" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Get Request Token"/><br/>
-        consumer key:     <input type="text" name="oauth_consumer_key" size="64"/><br/>
-        signature method: <input type="text" name="oauth_signature_method"/><br/>
-                        <input type="hidden" name="oauth_timestamp"/>
-                        <input type="hidden" name="oauth_nonce"/>
-                        <input type="hidden" name="oauth_signature"/>
+        consumer key:     <input name="oauth_consumer_key"     type="text" size="64"/><br/>
+        signature method: <input name="oauth_signature_method" type="text"/>
+                          <input name="oauth_timestamp"        type="hidden"/>
+                          <input name="oauth_nonce"            type="hidden"/>
+                          <input name="oauth_signature"        type="hidden"/>
     </form>
     <form name="etc">
         Service provider:
@@ -20,9 +20,9 @@
             <option value="mediamatic">mediamatic.nl
             <option value="termie" selected="true">term.ie
         </select><br/>
-        URL:             <input type="text" name="URL"            size="80"/><br/>
-        consumer secret: <input type="text" name="consumerSecret" size="64"/>
-                       <input type="hidden" name="tokenSecret" value=""/>
+        URL:              <input name="URL"                    type="text" size="80"/><br/>
+        consumer secret:  <input name="consumerSecret"         type="text" size="64"/><br/>
+                          <input name="tokenSecret"            type="hidden" value=""/>
     </form>
   </body>
 </HTML>

@@ -22,7 +22,7 @@ var mediamatic =
   }
 };
 
-var consumer = mediamatic;
+var consumer = termie;
 
 consumer.signForm =
 function signForm(form, etc) {

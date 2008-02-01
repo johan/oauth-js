@@ -8,6 +8,8 @@
     <form name="request" method="GET" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Echo"/><br/>
         message:          <input type="text" name="message"            size="64" value="Hello"/><br/>
+        <input name="option" type="checkbox" value="1">option 1<br/>
+        <input name="option" type="checkbox" value="2">option 2<br/>
         consumer key:     <input type="text" name="oauth_consumer_key" size="64"/><br/>
         access token:     <input type="text" name="oauth_token"        size="64" value="accesskey"/><br/>
         signature method: <input type="text" name="oauth_signature_method"/>

@@ -7,20 +7,20 @@
   <body>
     <form name="request" method="GET" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Echo"/><br/>
-        message:          <input type="text" name="message"            size="64" value="Hello"/><br/>
-        <input name="option" type="checkbox" value="1">option 1<br/>
-        <input name="option" type="checkbox" value="2">option 2<br/>
-        consumer key:     <input type="text" name="oauth_consumer_key" size="64"/><br/>
-        access token:     <input type="text" name="oauth_token"        size="64" value="accesskey"/><br/>
-        signature method: <input type="text" name="oauth_signature_method"/>
-                        <input type="hidden" name="oauth_timestamp"/>
-                        <input type="hidden" name="oauth_nonce"/>
-                        <input type="hidden" name="oauth_signature"/>
+        message:          <input name="message"            type="text" size="64" value="Hello"/><br/>
+                          <input name="option" value="1"   type="checkbox">option 1<br/>
+                          <input name="option" value="2"   type="checkbox">option 2<br/>
+        consumer key:     <input name="oauth_consumer_key" type="text" size="64"/><br/>
+        access token:     <input name="oauth_token"        type="text" size="64" value="accesskey"/><br/>
+        signature method: <input name="oauth_signature_method" type="text"/>
+                          <input name="oauth_timestamp"    type="hidden"/>
+                          <input name="oauth_nonce"        type="hidden"/>
+                          <input name="oauth_signature"    type="hidden"/>
     </form>
     <form name="etc">
-        URL:             <input type="text" name="URL"            size="80" value=/><br/>
-        consumer secret: <input type="text" name="consumerSecret" size="64"/><br/>
-        token secret:    <input type="text" name="tokenSecret"    size="64" value="accesssecret"/>
+        URL:              <input name="URL"                type="text" size="80"/><br/>
+        consumer secret:  <input name="consumerSecret"     type="text" size="64"/><br/>
+        token secret:     <input name="tokenSecret"        type="text" size="64" value="accesssecret"/>
     </form>
     <script type="text/javascript">
         document.etc.URL.value                        = termie.serviceProvider.echoURL;

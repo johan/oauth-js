@@ -41,7 +41,7 @@ OAuth.setProperties = function setProperties(into, from) {
 
 OAuth.setProperties(OAuth, // utility functions
 {
-    percentEncode: function(s) {
+    percentEncode: function percentEncode(s) {
         if (s == null) {
             return "";
         }
@@ -68,7 +68,7 @@ OAuth.setProperties(OAuth, // utility functions
 ,
     decodePercent: decodeURIComponent
 ,
-    getParameterList: function(parameters) {
+    getParameterList: function getParameterList(parameters) {
         if (parameters == null) {
             return null;
         }
@@ -85,7 +85,7 @@ OAuth.setProperties(OAuth, // utility functions
         return list;
     }
 ,
-    getParameterMap: function(parameters) {
+    getParameterMap: function getParameterMap(parameters) {
         if (parameters == null) {
             return null;
         }
@@ -105,7 +105,7 @@ OAuth.setProperties(OAuth, // utility functions
         return parameters;
     }
 ,
-    formEncode: function(parameters) {
+    formEncode: function formEncode(parameters) {
         var form = "";
         var list = OAuth.getParameterList(parameters);
         if (list != null) {
@@ -120,7 +120,7 @@ OAuth.setProperties(OAuth, // utility functions
         return form;
     }
 ,
-    decodeForm: function(form) {
+    decodeForm: function decodeForm(form) {
         var list = [];
         var nvps = form.split('&');
         for (var n in nvps) {
@@ -140,7 +140,7 @@ OAuth.setProperties(OAuth, // utility functions
         return list;
     }
 ,
-    setParameter: function(message, name, value) {
+    setParameter: function setParameter(message, name, value) {
         var parameters = message.parameters;
         if (parameters instanceof Array) {
             for (var p in parameters) {
@@ -163,19 +163,19 @@ OAuth.setProperties(OAuth, // utility functions
         }
     }
 ,
-    setParameters: function(message, parameters) {
+    setParameters: function setParameters(message, parameters) {
         var list = OAuth.getParameterList(parameters);
         for (var i in list) {
             OAuth.setParameter(message, list[i][0], list[i][1]);
         }
     }
 ,
-    setTimestampAndNonce: function(message) {
+    setTimestampAndNonce: function setTimestampAndNonce(message) {
         OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
         OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
     }
 ,
-    addToURL: function(url, parameters) {
+    addToURL: function addToURL(url, parameters) {
         newURL = url;
         if (parameters != null) {
             var toAdd = OAuth.formEncode(parameters);
@@ -189,12 +189,12 @@ OAuth.setProperties(OAuth, // utility functions
         return newURL;
     }
 ,
-    timestamp: function() {
+    timestamp: function timestamp() {
         var d = new Date();
         return Math.floor(d.getTime()/1000);
     }
 ,
-    nonce: function(length) {
+    nonce: function nonce(length) {
         var chars = OAuth.nonce.CHARS;
         var result = "";
         for (var i = 0; i < length; ++i) {
@@ -231,7 +231,7 @@ OAuth.declareClass(OAuth, "SignatureMethod", function OAuthSignatureMethod(){});
 OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
 {
     /** Add a signature to the message. */
-    sign: function(message) {
+    sign: function sign(message) {
         var baseString = OAuth.SignatureMethod.getBaseString(message);
         var signature = this.getSignature(baseString);
         OAuth.setParameter(message, "oauth_signature", signature);
@@ -239,7 +239,7 @@ OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
     }
 ,
     /** Set the key string for signing. */
-    initialize: function(name, accessor) {
+    initialize: function initialize(name, accessor) {
         var consumerSecret;
         if (accessor.accessorSecret != null
             && name.length > 9
@@ -261,7 +261,7 @@ OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
 // Class members:
 OAuth.setProperties(OAuth.SignatureMethod, // class members
 {
-    sign: function(message, accessor) {
+    sign: function sign(message, accessor) {
         var name = OAuth.getParameterMap(message.parameters).oauth_signature_method;
         if (name == null || name == "") {
             name = "HMAC-SHA1";
@@ -271,7 +271,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
     }
 ,
     /** Instantiate a SignatureMethod for the given method name. */
-    newMethod: function(name, accessor) {
+    newMethod: function newMethod(name, accessor) {
         var impl = OAuth.SignatureMethod.REGISTERED[name];
         if (impl != null) {
             var method = new impl();
@@ -296,16 +296,16 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         The resulting object should usually implement getSignature(baseString).
         You can easily define such a constructor by calling makeSubclass, below.
      */
-    registerMethodClass: function(names, classConstructor) {
+    registerMethodClass: function registerMethodClass(names, classConstructor) {
         for (var n in names) {
             OAuth.SignatureMethod.REGISTERED[names[n]] = classConstructor;
         }
     }
 ,
     /** Create a subclass of OAuth.SignatureMethod, with the given getSignature function. */
-    makeSubclass: function(getSignatureFunction) {
+    makeSubclass: function makeSubclass(getSignatureFunction) {
         var superClass = OAuth.SignatureMethod;
-        var subClass = function subClassOfSignatureMethod() {
+        var subClass = function() {
             superClass.call(this);
         }; 
         subClass.prototype = new superClass();
@@ -316,7 +316,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         return subClass;
     }
 ,
-    getBaseString: function(message) {
+    getBaseString: function getBaseString(message) {
         var URL = message.action;
         var q = URL.indexOf('?');
         var parameters;
@@ -336,7 +336,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeParameters(parameters));
     }
 ,
-    normalizeParameters: function(parameters) {
+    normalizeParameters: function normalizeParameters(parameters) {
         if (parameters == null) {
             return "";
         }

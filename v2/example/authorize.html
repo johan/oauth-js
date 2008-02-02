@@ -2,18 +2,22 @@
   <head>
     <script type="text/javascript" src="consumer.js"></script>
   </head>
-  <body>
+  <body onLoad="consumer.initializeForm(document.request, document.etc, 'userAuthorization')">
     <form name="request" method="GET" action="" onSubmit="this.action=document.etc.URL.value">
         <input type="submit" value="Authorize"/><br/>
-        request token: <input type="text" name="oauth_token"    size="64"/><br/>
-        callback URL:  <input type="text" name="oauth_callback" size="80"/>
+        request token:    <input name="oauth_token"            type="text" size="64"/><br/>
+        callback URL:     <input name="oauth_callback"         type="text" size="80"/>
     </form>
     <form name="etc">
-        URL: <input type="text" name="URL" size="80"/>
+        Service provider:
+        <select name="selector" onChange="consumer.initializeForm(document.request, document.etc, 'userAuthorization')">
+            <option value="example">Example Provider
+            <option value="mediamatic">mediamatic.nl
+            <option value="termie" selected="true">term.ie
+        </select><br/>
+        URL:              <input name="URL"                    type="text" size="80"/><br/>
     </form>
     <script type="text/javascript">
-        document.etc.URL.value = consumer.termie.serviceProvider.userAuthorizationURL;
-        document.request.oauth_token.value = consumer.termie.accessToken;
         document.request.oauth_callback.value = document.URL.substring(0, document.URL.replace(/\\/g, '/').lastIndexOf('/') + 1) + "accessToken.html";
     </script>
   </body>

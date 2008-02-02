@@ -46,15 +46,26 @@ function initializeForm(form, etc, usage) {
     var selection = selector.options[selector.selectedIndex].value;
     var selected = consumer[selection];
     if (selected != null) {
-        etc.URL.value                     = selected.serviceProvider[usage + "URL"];
-        form.oauth_signature_method.value = selected.serviceProvider.signatureMethod;
-        form.oauth_consumer_key.value     = selected.consumerKey;
-        etc.consumerSecret.value          = selected.consumerSecret;
-        if (selected[usage] != null) form.oauth_token.value = selected[usage];
-        if (selected[usage + "Secret"] != null) etc.tokenSecret.value = selected[usage + "Secret"];
+        consumer.setInputs(etc, { URL           : selected.serviceProvider[usage + "URL"]
+                                , consumerSecret: selected.consumerSecret
+                                , tokenSecret   : selected[usage + "Secret"]
+                                });
+        consumer.setInputs(form, { oauth_signature_method: selected.serviceProvider.signatureMethod
+                                 , oauth_consumer_key    : selected.consumerKey
+                                 , oauth_token           : selected[usage]
+                                 });
     }
     return true;
 };
+
+consumer.setInputs =
+function setInputs(form, props) {
+    for (p in props) {
+        if (form[p] != null && props[p] != null) {
+            form[p].value = props[p];
+        }
+    }
+}
 
 consumer.signForm =
 function signForm(form, etc) {

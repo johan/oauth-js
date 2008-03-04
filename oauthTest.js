@@ -40,7 +40,7 @@ var BASES = //
     };
 
 function testGetBaseString() {
-    for (label in BASES) {
+    for (var label in BASES) {
         try {
             var base = BASES[label];
             var b = 0;

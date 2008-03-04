@@ -47,7 +47,7 @@ OAuth.setProperties(OAuth, // utility functions
         }
         if (s instanceof Array) {
             var e = "";
-            for (var i in s) {
+            for (var i = 0; i < s.length; ++s) {
                 if (e != "") e += '&';
                 e += percentEncode(s[i]);
             }
@@ -94,7 +94,7 @@ OAuth.setProperties(OAuth, // utility functions
         }
         if (parameters instanceof Array) {
             var map = {};
-            for (var p in parameters) {
+            for (var p = 0; p < parameters.length; ++p) {
                 var key = parameters[p][0];
                 if (map[key] === undefined) { // first value wins
                     map[key] = parameters[p][1];
@@ -109,7 +109,7 @@ OAuth.setProperties(OAuth, // utility functions
         var form = "";
         var list = OAuth.getParameterList(parameters);
         if (list != null) {
-            for (var p in list) {
+            for (var p = 0; p < list.length; ++p) {
                 var value = list[p][1];
                 if (value == null) value = "";
                 if (form != "") form += '&';
@@ -123,7 +123,7 @@ OAuth.setProperties(OAuth, // utility functions
     decodeForm: function decodeForm(form) {
         var list = [];
         var nvps = form.split('&');
-        for (var n in nvps) {
+        for (var n = 0; n < nvps.length; ++n) {
             var nvp = nvps[n];
             var equals = nvp.indexOf('=');
             var name;
@@ -143,7 +143,7 @@ OAuth.setProperties(OAuth, // utility functions
     setParameter: function setParameter(message, name, value) {
         var parameters = message.parameters;
         if (parameters instanceof Array) {
-            for (var p in parameters) {
+            for (var p = 0; p < parameters.length; ++p) {
                 if (parameters[p][0] == name) {
                     if (value === undefined) {
                         parameters.splice(p, 1);
@@ -165,7 +165,7 @@ OAuth.setProperties(OAuth, // utility functions
 ,
     setParameters: function setParameters(message, parameters) {
         var list = OAuth.getParameterList(parameters);
-        for (var i in list) {
+        for (var i = 0; i < list.length; ++i) {
             OAuth.setParameter(message, list[i][0], list[i][1]);
         }
     }
@@ -297,7 +297,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         You can easily define such a constructor by calling makeSubclass, below.
      */
     registerMethodClass: function registerMethodClass(names, classConstructor) {
-        for (var n in names) {
+        for (var n = 0; n < names.length; ++n) {
             OAuth.SignatureMethod.REGISTERED[names[n]] = classConstructor;
         }
     }
@@ -326,7 +326,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
             // Combine the URL query string with the other parameters:
             parameters = OAuth.decodeForm(URL.substring(q + 1));
             var toAdd = OAuth.getParameterList(message.parameters);
-            for (var a in toAdd) {
+            for (var a = 0; a < toAdd.length; ++a) {
                 parameters.push(toAdd[a]);
             }
             URL = URL.substring(0, q);
@@ -342,7 +342,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         }
         var norm = [];
         var list = OAuth.getParameterList(parameters);
-        for (var p in list) {
+        for (var p = 0; p < list.length; ++p) {
             var nvp = list[p];
             if (nvp[0] != "oauth_signature") {
                 norm.push(nvp);

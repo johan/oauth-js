@@ -70,7 +70,7 @@ OAuth.setProperties(OAuth, // utility functions
 ,
     getParameterList: function getParameterList(parameters) {
         if (parameters == null) {
-            return null;
+            return [];
         }
         if (typeof parameters != "object") {
             return decodeForm(parameters + "");
@@ -87,7 +87,7 @@ OAuth.setProperties(OAuth, // utility functions
 ,
     getParameterMap: function getParameterMap(parameters) {
         if (parameters == null) {
-            return null;
+            return {};
         }
         if (typeof parameters != "object") {
             return getParameterMap(decodeForm(parameters + ""));
@@ -108,14 +108,12 @@ OAuth.setProperties(OAuth, // utility functions
     formEncode: function formEncode(parameters) {
         var form = "";
         var list = OAuth.getParameterList(parameters);
-        if (list != null) {
-            for (var p = 0; p < list.length; ++p) {
-                var value = list[p][1];
-                if (value == null) value = "";
-                if (form != "") form += '&';
-                form += OAuth.percentEncode(list[p][0])
-                  +'='+ OAuth.percentEncode(value);
-            }
+        for (var p = 0; p < list.length; ++p) {
+            var value = list[p][1];
+            if (value == null) value = "";
+            if (form != "") form += '&';
+            form += OAuth.percentEncode(list[p][0])
+              +'='+ OAuth.percentEncode(value);
         }
         return form;
     }

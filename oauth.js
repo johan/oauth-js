@@ -19,7 +19,7 @@
 // The HMAC-SHA1 signature method calls functions defined by
 // http://pajhome.org.uk/crypt/md5/sha1.js
 
-/* An OAuth message is represented like this:
+/* An OAuth message is represented as an object like this:
    {method: "GET", action: "http://server.com/path", parameters: ...}
 
    The parameters may be either a map {name: value, name2: value2}
@@ -27,6 +27,21 @@
    The latter representation is more powerful: it supports parameters
    in a specific sequence, or several parameters with the same name;
    for example [["a", 1], ["b", 2], ["a", 3]].
+
+   Parameter names and values are NOT percent-encoded in an object.
+   They must be encoded before transmission and decoded after reception.
+   For example, this message object:
+   {method: "GET", action: "http://server/path", parameters: {p: "x y"}}
+   ... can be transmitted as an HTTP request that begins:
+   GET http://server/path?p=x%20y HTTP/1.0
+   (This isn't a valid OAuth request, since it lacks a signature etc.)
+   Note that the object "x y" is transmitted as x%20y.  To encode
+   parameters, you can call OAuth.addToURL or OAuth.formEncode.
+
+   The message object model harmonizes with the browser object model for
+   input elements of an form, whose value property isn't percent encoded.
+   The browser encodes each value before transmitting it. For example,
+   see consumer.setInputs in example/consumer.js.
  */
 var OAuth; if (OAuth == null) OAuth = {};
 

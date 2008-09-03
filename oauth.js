@@ -16,7 +16,7 @@
 
 // Here's some JavaScript software that's useful for implementing OAuth.
 
-// The HMAC-SHA1 signature method calls functions defined by
+// The HMAC-SHA1 signature method calls b64_hmac_sha1, defined by
 // http://pajhome.org.uk/crypt/md5/sha1.js
 
 /* An OAuth message is represented as an object like this:
@@ -38,7 +38,7 @@
    Note that the object "x y" is transmitted as x%20y.  To encode
    parameters, you can call OAuth.addToURL or OAuth.formEncode.
 
-   The message object model harmonizes with the browser object model for
+   This message object model harmonizes with the browser object model for
    input elements of an form, whose value property isn't percent encoded.
    The browser encodes each value before transmitting it. For example,
    see consumer.setInputs in example/consumer.js.
@@ -342,11 +342,44 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
             for (var a = 0; a < toAdd.length; ++a) {
                 parameters.push(toAdd[a]);
             }
-            URL = URL.substring(0, q);
         }
         return OAuth.percentEncode(message.method.toUpperCase())
-         +'&'+ OAuth.percentEncode(URL)
+         +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeUrl(URL))
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeParameters(parameters));
+    }
+,
+    normalizeUrl: function normalizeUrl(url) {
+        var uri = OAuth.SignatureMethod.parseUri(url);
+        var scheme = uri.protocol.toLowerCase();
+        var authority = uri.authority.toLowerCase();
+        var dropPort = (scheme == "http" && uri.port == 80)
+                    || (scheme == "https" && uri.port == 443);
+        if (dropPort) {
+            // find the last : in the authority
+            var index = authority.lastIndexOf(":");
+            if (index >= 0) {
+                authority = authority.substring(0, index);
+            }
+        }
+        var path = uri.path;
+        if (!path) {
+            path = "/"; // conforms to RFC 2616 section 3.2.2
+        }
+        // we know that there is no query and no fragment here.
+        return scheme + "://" + authority + path;
+    }
+,
+    parseUri: function parseUri (str) {
+        /* This function was adapted from parseUri 1.2.1
+           http://stevenlevithan.com/demo/parseuri/js/assets/parseuri.js
+         */
+        var o = {key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+                 parser: { strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/ }},
+            m = o.parser.strict.exec(str),
+            uri = {},
+            i = 14;
+	while (i--) uri[o.key[i]] = m[i] || "";
+	return uri;
     }
 ,
     normalizeParameters: function normalizeParameters(parameters) {

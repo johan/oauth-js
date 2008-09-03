@@ -374,10 +374,10 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
            http://stevenlevithan.com/demo/parseuri/js/assets/parseuri.js
          */
         var o = {key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
-                 parser: { strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/ }},
-            m = o.parser.strict.exec(str),
-            uri = {},
-            i = 14;
+                 parser: {strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/ }};
+        var m = o.parser.strict.exec(str);
+        var uri = {};
+        var i = 14;
 	while (i--) uri[o.key[i]] = m[i] || "";
 	return uri;
     }

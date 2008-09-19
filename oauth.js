@@ -33,7 +33,7 @@
    For example, this message object:
    {method: "GET", action: "http://server/path", parameters: {p: "x y"}}
    ... can be transmitted as an HTTP request that begins:
-   GET http://server/path?p=x%20y HTTP/1.0
+   GET /path?p=x%20y HTTP/1.0
    (This isn't a valid OAuth request, since it lacks a signature etc.)
    Note that the object "x y" is transmitted as x%20y.  To encode
    parameters, you can call OAuth.addToURL or OAuth.formEncode.

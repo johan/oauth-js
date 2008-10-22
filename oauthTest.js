@@ -22,6 +22,10 @@ function testGetParameterList() {
     if (list == null || !(list instanceof Array) || list.length != 0) {
         alert("getParameterList(null) = " + list);
     }
+    list = OAuth.getParameterList('');
+    if (list == null || !(list instanceof Array) || list.length != 0) {
+        alert("getParameterList('') = " + list);
+    }
     var map = OAuth.getParameterMap(null);
     if (map == null || (map instanceof Array) || typeof map != "object") {
         alert("getParameterMap(null) = " + map);

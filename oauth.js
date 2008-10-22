@@ -138,6 +138,9 @@ OAuth.setProperties(OAuth, // utility functions
         var nvps = form.split('&');
         for (var n = 0; n < nvps.length; ++n) {
             var nvp = nvps[n];
+            if (nvp == '') {
+                continue;
+            }
             var equals = nvp.indexOf('=');
             var name;
             var value;

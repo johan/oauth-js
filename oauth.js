@@ -84,6 +84,7 @@ OAuth.setProperties(OAuth, // utility functions
 ,
     decodePercent: decodeURIComponent
 ,
+    /** Convert the given parameters to an Array of name-value pairs. */
     getParameterList: function getParameterList(parameters) {
         if (parameters == null) {
             return [];
@@ -101,6 +102,7 @@ OAuth.setProperties(OAuth, // utility functions
         return list;
     }
 ,
+    /** Convert the given parameters to a map from name to value. */
     getParameterMap: function getParameterMap(parameters) {
         if (parameters == null) {
             return {};

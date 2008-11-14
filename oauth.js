@@ -353,9 +353,9 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
     }
 ,
     /** Construct the value of the Authorization header for an HTTP request. */
-    getAuthorizationHeader: function getAuthorizationHeader(realm, message) {
+    getAuthorizationHeader: function getAuthorizationHeader(realm, parameters) {
         var header = 'OAuth realm="' + OAuth.percentEncode(realm) + '"';
-        for (var p in OAuth.getParameterList(message.parameters)) {
+        for (var p in OAuth.getParameterList(parameters)) {
             var name = p[0];
             if (name.startsWith("oauth_")) {
                 header += ', ' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(p[1]) + '"';

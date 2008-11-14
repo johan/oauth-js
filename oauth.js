@@ -36,7 +36,8 @@
    GET /path?p=x%20y HTTP/1.0
    (This isn't a valid OAuth request, since it lacks a signature etc.)
    Note that the object "x y" is transmitted as x%20y.  To encode
-   parameters, you can call OAuth.addToURL or OAuth.formEncode.
+   parameters, you can call OAuth.addToURL, OAuth.formEncode or
+   OAuth.getAuthorization.
 
    This message object model harmonizes with the browser object model for
    input elements of an form, whose value property isn't percent encoded.
@@ -351,6 +352,17 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeParameters(parameters));
     }
 ,
+    /** Construct the value of the Authorization header for an HTTP request. */
+    getAuthorizationHeader: function getAuthorizationHeader(realm, message) {
+        var header = 'OAuth realm="' + OAuth.percentEncode(realm) + '"';
+        for (var p in OAuth.getParameterList(message.parameters)) {
+            var name = p[0];
+            if (name.startsWith("oauth_")) {
+                header += ', ' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(p[1]) + '"';
+            }
+        }
+    }
+,
     normalizeUrl: function normalizeUrl(url) {
         var uri = OAuth.SignatureMethod.parseUri(url);
         var scheme = uri.protocol.toLowerCase();
@@ -381,8 +393,8 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         var m = o.parser.strict.exec(str);
         var uri = {};
         var i = 14;
-	while (i--) uri[o.key[i]] = m[i] || "";
-	return uri;
+        while (i--) uri[o.key[i]] = m[i] || "";
+        return uri;
     }
 ,
     normalizeParameters: function normalizeParameters(parameters) {

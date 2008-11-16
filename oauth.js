@@ -208,6 +208,20 @@ OAuth.setProperties(OAuth, // utility functions
         return newURL;
     }
 ,
+    /** Construct the value of the Authorization header for an HTTP request. */
+    getAuthorizationHeader: function getAuthorizationHeader(realm, parameters) {
+        var header = 'OAuth realm="' + OAuth.percentEncode(realm) + '"';
+        var list = OAuth.getParameterList(parameters);
+        for (var p = 0; p < list.length; ++p) {
+            var parameter = list[p];
+            var name = parameter[0];
+            if (name.indexOf("oauth_") == 0) {
+                header += ', ' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
+            }
+        }
+        return header;
+    }
+,
     timestamp: function timestamp() {
         var d = new Date();
         return Math.floor(d.getTime()/1000);
@@ -352,19 +366,6 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         return OAuth.percentEncode(message.method.toUpperCase())
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeUrl(URL))
          +'&'+ OAuth.percentEncode(OAuth.SignatureMethod.normalizeParameters(parameters));
-    }
-,
-    /** Construct the value of the Authorization header for an HTTP request. */
-    getAuthorizationHeader: function getAuthorizationHeader(realm, parameters) {
-        var header = 'OAuth realm="' + OAuth.percentEncode(realm) + '"';
-        var list = OAuth.getParameterList(parameters);
-        for (var p = 0; p < list.length; ++p) {
-            var parameter = list[p];
-            var name = parameter[0];
-            if (name.startsWith("oauth_")) {
-                header += ', ' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
-            }
-        }
     }
 ,
     normalizeUrl: function normalizeUrl(url) {

@@ -30,6 +30,17 @@ function testGetParameterList() {
     if (map == null || (map instanceof Array) || typeof map != "object") {
         alert("getParameterMap(null) = " + map);
     }
+    list = [['a', 'b'], ['oauth_token', 'T'], ['oauth_w@!rd', '#@*!']];
+    map = {a: 'b', oauth_token: 'T', 'oauth_w@!rd': '#@*!'};
+    var expected = 'OAuth realm="R", oauth_token="T", oauth_w%40%21rd="%23%40%2A%21"';
+    var actual = OAuth.getAuthorizationHeader('R', list);
+    if (actual == null || actual != expected) {
+        alert("getAuthorizationHeader\n" + expected + " != \n" + actual);
+    }
+    var actual = OAuth.getAuthorizationHeader('R', map);
+    if (actual == null || actual != expected) {
+        alert("getAuthorizationHeader\n" + expected + " != \n" + actual);
+    }
 }
 
 var OAUTH_A_BASE_STRING = "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&"

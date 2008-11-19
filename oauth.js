@@ -204,6 +204,9 @@ OAuth.setProperties(OAuth, // utility functions
 ,
     /** Fill in parameters to help form a complete request message.
         This method doesn't fill in every parameter.
+        The accessor object should be like:
+        {consumerKey:'foo', consumerSecret:'bar', accessorSecret:'nurn', token:'krelm', tokenSecret:'blah'}
+        The accessorSecret property is optional.
      */
     completeRequest: function completeRequest(message, accessor) {
         var map = OAuth.getParameterMap(message.parameters);

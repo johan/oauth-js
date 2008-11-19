@@ -17,7 +17,7 @@
 // Here are some unit tests for the software in oauth.js.
 // The test data were copied from http://oauth.pbwiki.com/TestCases
 
-function testGetParameterList() {
+function testGetParameters() {
     var list = OAuth.getParameterList(null);
     if (list == null || !(list instanceof Array) || list.length != 0) {
         alert("getParameterList(null) = " + list);
@@ -30,16 +30,44 @@ function testGetParameterList() {
     if (map == null || (map instanceof Array) || typeof map != "object") {
         alert("getParameterMap(null) = " + map);
     }
-    list = [['a', 'b'], ['oauth_token', 'T'], ['oauth_w@!rd', '#@*!']];
-    map = {a: 'b', oauth_token: 'T', 'oauth_w@!rd': '#@*!'};
-    var expected = 'OAuth realm="R", oauth_token="T", oauth_w%40%21rd="%23%40%2A%21"';
-    var actual = OAuth.getAuthorizationHeader('R', list);
+    var actual = OAuth.getParameter({x: 'a', y: 'b'}, 'x');
+    if (actual != 'a') {
+        alert("getParameter({}, 'x') = " + actual);
+    }
+    actual = OAuth.getParameter([['x', 'a'], ['y', 'b'], ['x', 'c']], 'x');
+    if (actual != 'a') {
+        alert("getParameter([], 'x') = " + actual);
+    }
+    var expected = 'OAuth realm="R",oauth_token="T",oauth_w%40%21rd="%23%40%2A%21"';
+    actual = OAuth.getAuthorizationHeader('R', [['a', 'b'], ['oauth_token', 'T'], ['oauth_w@!rd', '#@*!']]);
     if (actual == null || actual != expected) {
         alert("getAuthorizationHeader\n" + expected + " != \n" + actual);
     }
-    var actual = OAuth.getAuthorizationHeader('R', map);
+    actual = OAuth.getAuthorizationHeader('R', {a: 'b', oauth_token: 'T', 'oauth_w@!rd': '#@*!'});
     if (actual == null || actual != expected) {
         alert("getAuthorizationHeader\n" + expected + " != \n" + actual);
+    }
+    var message = {method: 'PUT', action: 'http://localhost', parameters: {}};
+    OAuth.completeRequest(message, {consumerKey: 'CK', token: 'T'});
+    map = message.parameters;
+    assertMemberEquals(map, 'oauth_consumer_key', 'CK');
+    assertMemberEquals(map, 'oauth_token', 'T');
+    assertMemberEquals(map, 'oauth_version', '1.0');
+    assertMemberNotNull(map, 'oauth_timestamp');
+    assertMemberNotNull(map, 'oauth_nonce');
+}
+
+function assertMemberEquals(map, name, expected) {
+    var actual = map[name];
+    if (actual != expected) {
+        alert(name + '=' + actual + ' (not ' + expected + ')');
+    }
+}
+
+function assertMemberNotNull(map, name) {
+    var actual = map[name];
+    if (!actual) {
+        alert(name + '=' + actual);
     }
 }
 

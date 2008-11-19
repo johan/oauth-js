@@ -123,6 +123,19 @@ OAuth.setProperties(OAuth, // utility functions
         return parameters;
     }
 ,
+    getParameter: function getParameter(parameters, name) {
+        if (parameters instanceof Array) {
+            for (var p = 0; p < parameters.length; ++p) {
+                if (parameters[p][0] == name) {
+                    return parameters[p][1]; // first value wins
+                }
+            }
+        } else {
+            return OAuth.getParameterMap(parameters)[name];
+        }
+        return null;
+    }
+,
     formEncode: function formEncode(parameters) {
         var form = "";
         var list = OAuth.getParameterList(parameters);
@@ -189,6 +202,29 @@ OAuth.setProperties(OAuth, // utility functions
         }
     }
 ,
+    /** Fill in parameters to help form a complete request message.
+        This method doesn't fill in every parameter.
+     */
+    completeRequest: function completeRequest(message, accessor) {
+        var map = OAuth.getParameterMap(message.parameters);
+        if (!map.oauth_consumer_key) {
+            OAuth.setParameter(message, "oauth_consumer_key", accessor.consumerKey || "");
+        }
+        if (!map.oauth_token) {
+            OAuth.setParameter(message, "oauth_token", accessor.token || "");
+        }
+        if (!map.oauth_version) {
+            OAuth.setParameter(message, "oauth_version", "1.0");
+        }
+        if (!map.oauth_timestamp) {
+            OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
+        }
+        if (!map.oauth_nonce) {
+            OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
+        }
+        OAuth.SignatureMethod.sign(message, accessor);
+    }
+,
     setTimestampAndNonce: function setTimestampAndNonce(message) {
         OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
         OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
@@ -216,7 +252,7 @@ OAuth.setProperties(OAuth, // utility functions
             var parameter = list[p];
             var name = parameter[0];
             if (name.indexOf("oauth_") == 0) {
-                header += ', ' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
+                header += ',' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
             }
         }
         return header;

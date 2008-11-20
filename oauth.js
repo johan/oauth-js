@@ -202,7 +202,7 @@ OAuth.setProperties(OAuth, // utility functions
         }
     }
 ,
-    /** Fill in parameters to help form a complete request for an access token or a protected resource.
+    /** Fill in parameters to help construct a request for an access token or a protected resource.
         Don't use this function for a request for a request token; it sets the oauth_token parameter.
         This function doesn't fill in every parameter.
         The accessor object should be like:
@@ -211,19 +211,19 @@ OAuth.setProperties(OAuth, // utility functions
      */
     completeRequest: function completeRequest(message, accessor) {
         var map = OAuth.getParameterMap(message.parameters);
-        if (!map.oauth_consumer_key) {
+        if (map.oauth_consumer_key == null) {
             OAuth.setParameter(message, "oauth_consumer_key", accessor.consumerKey || "");
         }
-        if (!map.oauth_token) {
+        if (map.oauth_token == null) {
             OAuth.setParameter(message, "oauth_token", accessor.token || "");
         }
-        if (!map.oauth_version) {
+        if (map.oauth_version == null) {
             OAuth.setParameter(message, "oauth_version", "1.0");
         }
-        if (!map.oauth_timestamp) {
+        if (map.oauth_timestamp == null) {
             OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
         }
-        if (!map.oauth_nonce) {
+        if (map.oauth_nonce == null) {
             OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
         }
         OAuth.SignatureMethod.sign(message, accessor);

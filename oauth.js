@@ -254,10 +254,7 @@ OAuth.setProperties(OAuth, // utility functions
         var list = OAuth.getParameterList(parameters);
         for (var p = 0; p < list.length; ++p) {
             var parameter = list[p];
-            var name = parameter[0];
-            if (name.indexOf("oauth_") == 0) {
-                header += ',' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
-            }
+            header += ',' + OAuth.percentEncode(parameter[0]) + '="' + OAuth.percentEncode(parameter[1]) + '"';
         }
         return header;
     }

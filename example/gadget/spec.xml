@@ -39,10 +39,10 @@ function showResponse(response) {
         alert(msg);
     }
     var headers = response.headers;
-    if (headers != null && headers.length > 0) {
+    if (headers != null) {
         var msg = "";
-        for (var e = 0; e < headers.length; ++i) {
-            msg += (headers[e] + "\n");
+        for (var h in headers) {
+            msg += (h + ": " + headers[h] + "\n");
         }
         alert(msg);
     }

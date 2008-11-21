@@ -20,16 +20,6 @@
     <button onclick="getAccessToken(consumer.madgex, 'requestkey', 'requestsecret')">Get Access Token</button><br/>
     <button onclick="getEcho(consumer.madgex, 'accesskey', 'accesssecret')">Echo</button><br/>
     <script>
-consumer.madgex =
-{ consumerKey   : "key"
-, consumerSecret: "secret"
-, serviceProvider:
-  { signatureMethod : "HMAC-SHA1"
-  , requestTokenURL : "http://echo.lab.madgex.com/request-token.ashx"
-  , accessTokenURL  : "http://echo.lab.madgex.com/access-token.ashx"
-  , echoURL         : "http://echo.lab.madgex.com/echo.ashx"
-  }
-};
 function getSpec() {
     var url = "http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml";
     var params = {};

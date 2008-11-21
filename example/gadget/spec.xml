@@ -18,6 +18,7 @@
     <button onclick="testOAuth()">Test Library</button><br/>
     <button onclick="getRequestToken(consumer.madgex)">Get Request Token</button><br/>
     <button onclick="getAccessToken(consumer.madgex, 'requestkey', 'requestsecret')">Get Access Token</button><br/>
+    <button onclick="getEcho(consumer.madgex, 'accesskey', 'accesssecret')">Echo</button><br/>
     <script>
 consumer.madgex =
 { consumerKey   : "key"
@@ -38,8 +39,8 @@ function getSpec() {
 function getRequestToken(c) {
     sendRequest( { method: 'POST'
                  , action: c.serviceProvider.requestTokenURL
-                 , parameters: { oauth_consumer_key: c.consumerKey
-                               , oauth_signature_method: c.serviceProvider.signatureMethod
+                 , parameters: { oauth_signature_method: c.serviceProvider.signatureMethod
+                               , oauth_consumer_key: c.consumerKey
                                }
                  }
                , { consumerSecret: c.consumerSecret
@@ -50,9 +51,24 @@ function getRequestToken(c) {
 function getAccessToken(c, token, secret) {
     sendRequest( { method: 'GET'
                  , action: c.serviceProvider.accessTokenURL
-                 , parameters: { oauth_consumer_key: c.consumerKey
-                               , oauth_token: token
+                 , parameters: { oauth_signature_method: c.serviceProvider.signatureMethod
+                               , oauth_consumer_key: c.consumerKey
                                , oauth_signature_method: c.serviceProvider.signatureMethod
+                               }
+                 }
+               , { consumerSecret: c.consumerSecret
+                 , tokenSecret   : secret
+                 }
+               );
+};
+function getEcho(c, token, secret) {
+    sendRequest( { method: 'GET'
+                 , action: c.serviceProvider.echoURL
+                 , parameters: [ ['oauth_signature_method', c.serviceProvider.signatureMethod]
+                               , ['oauth_consumer_key', c.consumerKey]
+                               , ['oauth_token', token]
+                               , ['hello', 'world']
+                               , ['hello', 'again']
                                }
                  }
                , { consumerSecret: c.consumerSecret

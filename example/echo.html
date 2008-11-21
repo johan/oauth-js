@@ -5,7 +5,7 @@
     <script type="text/javascript" src="consumer.js"></script>
   </head>
   <body onLoad="consumer.initializeForm(document.request, document.etc, 'echo')">
-    <form name="request" method="POST" onSubmit="consumer.signForm(this, document.etc)">
+    <form name="request" method="GET" onSubmit="consumer.signForm(this, document.etc)">
         <input type="submit" value="Echo"/><br/>
         message:          <input name="message"                type="text" size="64" value="Hello"/><br/>
                           <input name="option" value="1"       type="checkbox">option 1<br/>
@@ -21,8 +21,9 @@
         Service provider:
         <select name="selector" onChange="consumer.initializeForm(document.request, document.etc, 'echo')">
             <option value="example">Example Provider
+            <option value="madgex" selected="true">madgex.com
             <option value="mediamatic">mediamatic.nl
-            <option value="termie" selected="true">term.ie
+            <option value="termie">term.ie
         </select><br/>
         URL:              <input name="URL"                    type="text" size="80"/><br/>
         consumer secret:  <input name="consumerSecret"         type="text" size="64"/><br/>

@@ -15,6 +15,10 @@ consumer.example =
 consumer.madgex =
 { consumerKey   : "key"
 , consumerSecret: "secret"
+, accessToken: "requestkey"
+, accessTokenSecret: "requestsecret"
+, echo: "accesskey"
+, echoSecret: "accesssecret"
 , serviceProvider:
   { signatureMethod     : "HMAC-SHA1"
   , requestTokenURL     : "http://echo.lab.madgex.com/request-token.ashx"

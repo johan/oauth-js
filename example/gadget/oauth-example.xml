@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-<!-- This is a simple gadget, as described in
-     http://code.google.com/apis/gadgets/docs/dev_guide.html
+<!--
+     A little demonstration of the OAuth library for JavaScript.
+     This is kind of silly, because any OpenSocial container
+     provides an OAuth implementation built into makeRequest,
+     with better security than is possible in a gadget like this.
 
+     This is a gadget, as described in
+     http://code.google.com/apis/gadgets/docs/dev_guide.html
      The URL of this spec is
-     http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml
+     http://oauth.googlecode.com/svn/code/javascript/example/gadget/oauth-example.xml
      as usual for files in this Subversion repository.
  -->
   <ModulePrefs title="OAuth javascript/example/gadget"/>
@@ -88,33 +93,22 @@ function sendRequest(message, accessor) {
     // provided by the browser, which restricts access.
 };
 function showResponse(response) {
-    var errors = response.errors;
-    if (errors != null && errors.length > 0) {
+    showObject(response);
+    showObject(response.errors);
+    showObject(response.headers);
+};
+function showObject(thing) {
+    if (thing != null) {
         var msg = "";
-        for (var e in errors) {
-            msg += (e + ": " + errors[e] + "\n");
+        for (var t in thing) {
+            if (thing[t] !== undefined) {
+                msg += (t + ": " + thing[t] + "\n");
+            }
         }
         if (msg != "") {
-           alert(msg);
+            alert(msg);
         }
     }
-    var headers = response.headers;
-    if (headers != null) {
-        var msg = "";
-        for (var h in headers) {
-            msg += (h + ": " + headers[h] + "\n");
-        }
-        if (msg != "") {
-           alert(msg);
-        }
-    }
-    var msg = "";
-    for (var f in response) {
-        if (response[f] !== undefined) {
-            msg += (f + ": " + response[f] + "\n");
-        }
-    }
-    alert(msg);
 };
 var METHOD_TYPES = { 'GET'   : gadgets.io.MethodType.GET
                    , 'POST'  : gadgets.io.MethodType.POST

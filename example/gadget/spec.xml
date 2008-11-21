@@ -8,12 +8,5 @@
      as usual for files in this Subversion repository.
  -->
   <ModulePrefs title="OAuth javascript/example/gadget"/>
-  <Content type="html">
-<![CDATA[
-    <script src="http://oauth.googlecode.com/svn/code/javascript/oauthTest.js"></script>
-    <script src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
-    <script src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
-    <button onclick="testOAuth()">Test</button><br/>
-]]>
-  </Content>
+  <Content type="url" href="http://oauth.googlecode.com/svn/code/javascript/example/index.html" />
 </Module>

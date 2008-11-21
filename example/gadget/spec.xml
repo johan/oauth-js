@@ -23,10 +23,10 @@ consumer.madgex =
 { consumerKey   : "key"
 , consumerSecret: "secret"
 , serviceProvider:
-  { signatureMethod     : "HMAC-SHA1"
-  , requestTokenURL     : "http://echo.lab.madgex.com/request-token.ashx"
-  , accessTokenURL      : "http://echo.lab.madgex.com/access-token.ashx"
-  , echoURL             : "http://echo.lab.madgex.com/echo.ashx"
+  { signatureMethod : "HMAC-SHA1"
+  , requestTokenURL : "http://echo.lab.madgex.com/request-token.ashx"
+  , accessTokenURL  : "http://echo.lab.madgex.com/access-token.ashx"
+  , echoURL         : "http://echo.lab.madgex.com/echo.ashx"
   }
 };
 function getSpec() {
@@ -48,7 +48,7 @@ function getRequestToken(c) {
                );
 };
 function getAccessToken(c, token, secret) {
-    sendRequest( { method: 'GET'
+    sendRequest( { method: 'POST'
                  , action: c.serviceProvider.accessTokenURL
                  , parameters: { oauth_consumer_key: c.consumerKey
                                , oauth_token: token

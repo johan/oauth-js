@@ -14,19 +14,12 @@
     <script src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
     <script src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
     <script src="http://oauth.googlecode.com/svn/code/javascript/example/consumer.js"></script>
-    <button onclick="getSpec()">Get Spec</button><br/>
-    <button onclick="testOAuth()">Test Library</button><br/>
+    <button onclick="testOAuth()">Self Test</button><br/>
     <button onclick="getRequestToken(consumer.madgex)">Get Request Token</button><br/>
     <button onclick="getAccessToken(consumer.madgex, 'requestkey', 'requestsecret')">Get Access Token</button><br/>
     <button onclick="getEcho(consumer.madgex, 'accesskey', 'accesssecret')">Echo</button><br/>
     <button onclick="getEcho(consumer.madgex, 'accesskey', 'accessSecret')">Wrong Secret</button><br/>
     <script>
-function getSpec() {
-    var url = "http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml";
-    var params = {};
-    params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
-    gadgets.io.makeRequest(url, showResponse, params);
-};
 function getRequestToken(c) {
     sendRequest( { method: 'POST'
                  , action: c.serviceProvider.requestTokenURL
@@ -94,13 +87,6 @@ function sendRequest(message, accessor) {
     // I suppose the implementation of XMLHttpRequest is
     // provided by the browser, which restricts access.
 };
-function handler() {
-    if (this.readyState == 4) {
-        alert(this.status + " " + this.statusText);
-        alert(this.getAllResponseHeaders());
-        alert(this.responseText);
-    }
-};
 function showResponse(response) {
     var errors = response.errors;
     if (errors != null && errors.length > 0) {
@@ -124,10 +110,11 @@ function showResponse(response) {
     }
     var msg = "";
     for (var f in response) {
-        msg += (f + ": " + response[f] + "\n");
+        if (response[f] !== undefined) {
+            msg += (f + ": " + response[f] + "\n");
+        }
     }
     alert(msg);
-    // alert(response.text); // The HTTP response body
 };
 var METHOD_TYPES = { 'GET'   : gadgets.io.MethodType.GET
                    , 'POST'  : gadgets.io.MethodType.POST

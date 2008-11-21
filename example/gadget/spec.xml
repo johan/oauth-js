@@ -69,7 +69,7 @@ function getEcho(c, token, secret) {
                                , ['oauth_token', token]
                                , ['hello', 'world']
                                , ['hello', 'again']
-                               }
+                               ]
                  }
                , { consumerSecret: c.consumerSecret
                  , tokenSecret   : secret

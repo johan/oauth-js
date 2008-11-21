@@ -33,10 +33,12 @@ function showResponse(response) {
     var errors = response.errors;
     if (errors != null && errors.length > 0) {
         var msg = "";
-        for (var e = 0; e < errors.length; ++i) {
-            msg += (errors[e] + "\n");
+        for (var e in errors) {
+            msg += (e + ": " + errors[e] + "\n");
         }
-        alert(msg);
+        if (msg != "") {
+           alert(msg);
+        }
     }
     var headers = response.headers;
     if (headers != null) {
@@ -44,10 +46,15 @@ function showResponse(response) {
         for (var h in headers) {
             msg += (h + ": " + headers[h] + "\n");
         }
-        alert(msg);
+        if (msg != "") {
+           alert(msg);
+        }
     }
     var msg = "";
     for (var f in response) {
+        if (typeof f == "object") {
+            msg += f.prototype + " ";
+        }
         msg += (f + ": " + response[f] + "\n");
     }
     alert(msg);

@@ -11,6 +11,12 @@
   <Content type="html">
 <![CDATA[
 A simple demonstration of the OAuth library for JavaScript.
+    <script src="http://oauth.googlecode.com/svn/code/javascript/oauthTest.js"></script>
+    <script src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+    <script src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+    <button onclick="testGetParameters()">getParameters</button><br/>
+    <button onclick="testGetBaseString()">getBaseString</button><br/>
+    <button onclick="testGetSignature()">getSignature</button><br/>
 ]]>
   </Content>
 </Module>

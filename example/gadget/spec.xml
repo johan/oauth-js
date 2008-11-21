@@ -13,7 +13,7 @@
     <script src="http://oauth.googlecode.com/svn/code/javascript/oauthTest.js"></script>
     <script src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
     <script src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
-    <button onclick="getGetParameters(); testGetBaseString(); testGetSignature()">Test</button><br/>
+    <button onclick="testOAuth()">Test</button><br/>
 ]]>
   </Content>
 </Module>

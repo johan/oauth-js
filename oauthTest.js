@@ -17,6 +17,12 @@
 // Here are some unit tests for the software in oauth.js.
 // The test data were copied from http://oauth.pbwiki.com/TestCases
 
+function testOAuth() {
+    testGetParameters();
+    testGetBaseString();
+    testGetSignature();
+}
+
 function testGetParameters() {
     var list = OAuth.getParameterList(null);
     if (list == null || !(list instanceof Array) || list.length != 0) {

@@ -19,6 +19,16 @@
     <button onclick="getRequestToken(consumer.madgex)">Get Request Token</button><br/>
     <button onclick="getAccessToken(consumer.madgex, 'requestkey', 'requestsecret')">Get Access Token</button><br/>
     <script>
+consumer.madgex =
+{ consumerKey   : "key"
+, consumerSecret: "secret"
+, serviceProvider:
+  { signatureMethod     : "HMAC-SHA1"
+  , requestTokenURL     : "http://echo.lab.madgex.com/request-token.ashx"
+  , accessTokenURL      : "http://echo.lab.madgex.com/access-token.ashx"
+  , echoURL             : "http://echo.lab.madgex.com/echo.ashx"
+  }
+};
 function showBody(response) {
     alert(response.text); // The HTTP response body
 };

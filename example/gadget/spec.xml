@@ -30,7 +30,10 @@ consumer.madgex =
   }
 };
 function showResponse(response) {
-    alert(response.text); // The HTTP response body
+    for (var f in response) {
+        alert(f + ": " + response[f]);
+    }
+    // alert(response.text); // The HTTP response body
 };
 function getSpec() {
     var url = "http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml";
@@ -78,10 +81,14 @@ function sendRequest(message, accessor) {
     }
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
     gadgets.io.makeRequest(URL, showResponse, params);
+
     var client = new XMLHttpRequest();
     client.onreadystatechange = handler;
-    //client.open(message.method, message.action);
-    //client.send();
+    // This will fail, indicating 'Access Denied':
+    // client.open(message.method, message.action);
+    // client.send();
+    // I suppose the implementation of XMLHttpRequest is
+    // provided by the browser, which restricts access.
 };
 function handler() {
     if (this.readyState == 4) {

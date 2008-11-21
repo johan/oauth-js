@@ -30,9 +30,27 @@ consumer.madgex =
   }
 };
 function showResponse(response) {
-    for (var f in response) {
-        alert(f + ": " + response[f]);
+    var errors = response.errors;
+    if (errors != null && errors.length > 0) {
+        var msg = "";
+        for (var e = 0; e < errors.length; ++i) {
+            msg += (errors[e] + "\n");
+        }
+        alert(msg);
     }
+    var headers = response.headers;
+    if (headers != null && headers.length > 0) {
+        var msg = "";
+        for (var e = 0; e < headers.length; ++i) {
+            msg += (headers[e] + "\n");
+        }
+        alert(msg);
+    }
+    var msg = "";
+    for (var f in response) {
+        msg += (f + ": " + response[f] + "\n");
+    }
+    alert(msg);
     // alert(response.text); // The HTTP response body
 };
 function getSpec() {

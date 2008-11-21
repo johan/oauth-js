@@ -80,8 +80,8 @@ function sendRequest(message, accessor) {
     gadgets.io.makeRequest(URL, showResponse, params);
     var client = new XMLHttpRequest();
     client.onreadystatechange = handler;
-    client.open(message.method, message.action);
-    client.send();
+    //client.open(message.method, message.action);
+    //client.send();
 };
 function handler() {
     if (this.readyState == 4) {

@@ -14,6 +14,18 @@
     <script src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
     <script src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
     <button onclick="testOAuth()">Test</button><br/>
+    <button onclick="getSpec()">Get Spec</button><br/>
+    <script>
+function getSpec() {    
+    var params = {};  
+    params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;  
+    var url = "http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml";  
+    gadgets.io.makeRequest(url, showResponse, params);
+};
+function showResponse(response) {  
+    alert("response: " + response.text); // raw text of the response
+};
+    </script>
 ]]>
   </Content>
 </Module>

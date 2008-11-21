@@ -80,7 +80,7 @@ function sendRequest(message, accessor) {
     gadgets.io.makeRequest(URL, showResponse, params);
     var client = new XMLHttpRequest();
     client.onreadystatechange = handler;
-    client.open(message.method, c.serviceProvider.accessTokenURL);
+    client.open(message.method, message.action);
     client.send();
 };
 function handler() {

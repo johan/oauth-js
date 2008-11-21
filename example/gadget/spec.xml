@@ -17,6 +17,7 @@
     <button onclick="getSpec()">Get Spec</button><br/>
     <button onclick="testOAuth()">Test Library</button><br/>
     <button onclick="getRequestToken(consumer.termie)">Get Request Token</button><br/>
+    <button onclick="getAccessToken(consumer.termie, 'requestkey', 'requestsecret')">Get Request Token</button><br/>
     <script>
 function showBody(response) {
     alert(response.text); // The HTTP response body
@@ -38,15 +39,42 @@ function getRequestToken(c) {
                                 , oauth_signature_method: c.serviceProvider.signatureMethod
                                 }
                   };
+    sendRequest(message, accessor);
+};
+function getAccessToken(c, token, secret) {
+    var URL = c.serviceProvider.requestTokenURL;
+    var accessor= { consumerSecret: c.consumerSecret
+                  , tokenSecret   : secret
+                  };
+    var message = { method: 'POST'
+                  , action: URL
+                  , parameters: { oauth_consumer_key: c.consumerKey
+                                , oauth_token: token
+                                , oauth_signature_method: c.serviceProvider.signatureMethod
+                                }
+                  };
+    sendRequest(message, accessor);
+};
+function sendRequest(message, accessor) {
     OAuth.setTimestampAndNonce(message);
     OAuth.SignatureMethod.sign(message, accessor);
+    var method = METHOD_TYPES[message.method];
     var params = {};
-    params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-    params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/x-www-form-urlencoded'};
-    params[gadgets.io.RequestParameters.POST_DATA] = OAuth.formEncode(message.parameters);
+    params[gadgets.io.RequestParameters.METHOD] = method;
+    if (method == gadgets.io.MethodType.POST) {
+        params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/x-www-form-urlencoded'};
+        params[gadgets.io.RequestParameters.POST_DATA] = OAuth.formEncode(message.parameters);
+    } else {
+        message.action = OAuth.addToURL(message.action, message.parameters);
+    }
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
-    gadgets.io.makeRequest(URL, showBody, params);
+    gadgets.io.makeRequest(message.action, showBody, params);
 };
+var METHOD_TYPES = { 'GET'   : gadgets.io.MethodType.GET
+                   , 'POST'  : gadgets.io.MethodType.POST
+                   , 'PUT'   : gadgets.io.MethodType.PUT
+                   , 'DELETE': gadgets.io.MethodType.DELETE
+                   };
     </script>
 ]]>
   </Content>

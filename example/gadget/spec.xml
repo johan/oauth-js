@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This defines a simple gadget, as described in
+     http://code.google.com/apis/gadgets/docs/dev_guide.html
+
+     The URL of this spec is
+     http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml
+     as usual for files in this Subversion repository.
+ -->
+<Module>
+  <ModulePrefs title="Example"/>
+  <Content type="html">
+<![CDATA[ 
+Hello, world!
+]]>
+  </Content>
+</Module>

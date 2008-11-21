@@ -48,7 +48,7 @@ function getRequestToken(c) {
                );
 };
 function getAccessToken(c, token, secret) {
-    sendRequest( { method: 'POST'
+    sendRequest( { method: 'GET'
                  , action: c.serviceProvider.accessTokenURL
                  , parameters: { oauth_consumer_key: c.consumerKey
                                , oauth_token: token

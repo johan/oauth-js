@@ -41,7 +41,7 @@ function getRequestToken(c) {
                );
 };
 function getAccessToken(c, token, secret) {
-    sendRequest( { method: 'POST'
+    sendRequest( { method: 'GET'
                  , action: c.serviceProvider.accessTokenURL
                  , parameters: { oauth_consumer_key: c.consumerKey
                                , oauth_token: token
@@ -57,16 +57,17 @@ function sendRequest(message, accessor) {
     OAuth.setTimestampAndNonce(message);
     OAuth.SignatureMethod.sign(message, accessor);
     var method = METHOD_TYPES[message.method];
+    var URL = message.action;
     var params = {};
     params[gadgets.io.RequestParameters.METHOD] = method;
     if (method == gadgets.io.MethodType.POST) {
         params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/x-www-form-urlencoded'};
         params[gadgets.io.RequestParameters.POST_DATA] = OAuth.formEncode(message.parameters);
     } else {
-        message.action = OAuth.addToURL(message.action, message.parameters);
+        URL = OAuth.addToURL(URL, message.parameters);
     }
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
-    gadgets.io.makeRequest(message.action, showBody, params);
+    gadgets.io.makeRequest(URL, showBody, params);
 };
 var METHOD_TYPES = { 'GET'   : gadgets.io.MethodType.GET
                    , 'POST'  : gadgets.io.MethodType.POST

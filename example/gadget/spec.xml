@@ -53,7 +53,7 @@ function getAccessToken(c, token, secret) {
                  , action: c.serviceProvider.accessTokenURL
                  , parameters: { oauth_signature_method: c.serviceProvider.signatureMethod
                                , oauth_consumer_key: c.consumerKey
-                               , oauth_signature_method: c.serviceProvider.signatureMethod
+                               , oauth_token: token
                                }
                  }
                , { consumerSecret: c.consumerSecret

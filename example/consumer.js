@@ -12,6 +12,17 @@ consumer.example =
   }
 };
 
+consumer.madgex =
+{ consumerKey   : "key"
+, consumerSecret: "secret"
+, serviceProvider:
+  { signatureMethod     : "HMAC-SHA1"
+  , requestTokenURL     : "http://echo.lab.madgex.com/request-token.ashx"
+  , accessTokenURL      : "http://echo.lab.madgex.com/access-token.ashx"
+  , echoURL             : "http://echo.lab.madgex.com/echo.ashx"
+  }
+};
+
 consumer.mediamatic =
 { consumerKey   : "e388e4f4d6f4cc10ff6dc0fd1637da370478e49e2"
 , consumerSecret: "0b062293b6e29ec91a23b2002abf88e9"

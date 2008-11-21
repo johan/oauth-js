@@ -71,7 +71,7 @@ function sendRequest(message, accessor) {
         params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/x-www-form-urlencoded'};
         params[gadgets.io.RequestParameters.POST_DATA] = OAuth.formEncode(message.parameters);
     } else {
-        OAuth.addToURL(URL, message.parameters);
+        URL = OAuth.addToURL(URL, message.parameters);
         // This would be better, but you can't get the headers from the response.
         // params[gadgets.io.RequestParameters.HEADERS]
         // = {Authorization: OAuth.getAuthorizationHeader(message.parameters)};

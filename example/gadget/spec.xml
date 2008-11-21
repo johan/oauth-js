@@ -29,14 +29,14 @@ consumer.madgex =
   , echoURL             : "http://echo.lab.madgex.com/echo.ashx"
   }
 };
-function showBody(response) {
+function showResponse(response) {
     alert(response.text); // The HTTP response body
 };
 function getSpec() {
     var url = "http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml";
     var params = {};
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
-    gadgets.io.makeRequest(url, showBody, params);
+    gadgets.io.makeRequest(url, showResponse, params);
 };
 function getRequestToken(c) {
     sendRequest( { method: 'POST'
@@ -77,7 +77,18 @@ function sendRequest(message, accessor) {
         params[gadgets.io.RequestParameters.HEADERS] = {Authorization: OAuth.getAuthorizationHeader(message.parameters)};
     }
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
-    gadgets.io.makeRequest(URL, showBody, params);
+    gadgets.io.makeRequest(URL, showResponse, params);
+    var client = new XMLHttpRequest();
+    client.onreadystatechange = handler;
+    client.open(message.method, c.serviceProvider.accessTokenURL);
+    client.send();
+};
+function handler() {
+    if (this.readyState == 4) {
+        alert(this.status + " " + this.statusText);
+        alert(this.getAllResponseHeaders());
+        alert(this.responseText);
+    }
 };
 var METHOD_TYPES = { 'GET'   : gadgets.io.MethodType.GET
                    , 'POST'  : gadgets.io.MethodType.POST

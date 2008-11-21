@@ -17,7 +17,7 @@
     <button onclick="getSpec()">Get Spec</button><br/>
     <button onclick="testOAuth()">Test Library</button><br/>
     <button onclick="getRequestToken(consumer.termie)">Get Request Token</button><br/>
-    <button onclick="getAccessToken(consumer.termie, 'requestkey', 'requestsecret')">Get Request Token</button><br/>
+    <button onclick="getAccessToken(consumer.termie, 'requestkey', 'requestsecret')">Get Access Token</button><br/>
     <script>
 function showBody(response) {
     alert(response.text); // The HTTP response body
@@ -29,31 +29,29 @@ function getSpec() {
     gadgets.io.makeRequest(url, showBody, params);
 };
 function getRequestToken(c) {
-    var URL = c.serviceProvider.requestTokenURL;
-    var accessor= { consumerSecret: c.consumerSecret
-                  , tokenSecret   : ''
-                  };
-    var message = { method: 'POST'
-                  , action: URL
-                  , parameters: { oauth_consumer_key: c.consumerKey
-                                , oauth_signature_method: c.serviceProvider.signatureMethod
-                                }
-                  };
-    sendRequest(message, accessor);
+    sendRequest( { method: 'POST'
+                 , action: c.serviceProvider.requestTokenURL
+                 , parameters: { oauth_consumer_key: c.consumerKey
+                               , oauth_signature_method: c.serviceProvider.signatureMethod
+                               }
+                 }
+               , { consumerSecret: c.consumerSecret
+                 , tokenSecret   : ''
+                 }
+               );
 };
 function getAccessToken(c, token, secret) {
-    var URL = c.serviceProvider.requestTokenURL;
-    var accessor= { consumerSecret: c.consumerSecret
-                  , tokenSecret   : secret
-                  };
-    var message = { method: 'POST'
-                  , action: URL
-                  , parameters: { oauth_consumer_key: c.consumerKey
-                                , oauth_token: token
-                                , oauth_signature_method: c.serviceProvider.signatureMethod
-                                }
-                  };
-    sendRequest(message, accessor);
+    sendRequest( { method: 'POST'
+                 , action: c.serviceProvider.accessTokenURL
+                 , parameters: { oauth_consumer_key: c.consumerKey
+                               , oauth_token: token
+                               , oauth_signature_method: c.serviceProvider.signatureMethod
+                               }
+                 }
+               , { consumerSecret: c.consumerSecret
+                 , tokenSecret   : secret
+                 }
+               );
 };
 function sendRequest(message, accessor) {
     OAuth.setTimestampAndNonce(message);

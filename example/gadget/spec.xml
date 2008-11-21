@@ -64,7 +64,7 @@ function sendRequest(message, accessor) {
         params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/x-www-form-urlencoded'};
         params[gadgets.io.RequestParameters.POST_DATA] = OAuth.formEncode(message.parameters);
     } else {
-        URL = OAuth.addToURL(URL, message.parameters);
+        params[gadgets.io.RequestParameters.HEADERS] = {Authorization: OAuth.getAuthorizationHeader(message.parameters)};
     }
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
     gadgets.io.makeRequest(URL, showBody, params);

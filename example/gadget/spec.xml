@@ -29,37 +29,6 @@ consumer.madgex =
   , echoURL             : "http://echo.lab.madgex.com/echo.ashx"
   }
 };
-function showResponse(response) {
-    var errors = response.errors;
-    if (errors != null && errors.length > 0) {
-        var msg = "";
-        for (var e in errors) {
-            msg += (e + ": " + errors[e] + "\n");
-        }
-        if (msg != "") {
-           alert(msg);
-        }
-    }
-    var headers = response.headers;
-    if (headers != null) {
-        var msg = "";
-        for (var h in headers) {
-            msg += (h + ": " + headers[h] + "\n");
-        }
-        if (msg != "") {
-           alert(msg);
-        }
-    }
-    var msg = "";
-    for (var f in response) {
-        if (typeof f == "object") {
-            msg += f.prototype + " ";
-        }
-        msg += (f + ": " + response[f] + "\n");
-    }
-    alert(msg);
-    // alert(response.text); // The HTTP response body
-};
 function getSpec() {
     var url = "http://oauth.googlecode.com/svn/code/javascript/example/gadget/spec.xml";
     var params = {};
@@ -102,13 +71,16 @@ function sendRequest(message, accessor) {
         params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/x-www-form-urlencoded'};
         params[gadgets.io.RequestParameters.POST_DATA] = OAuth.formEncode(message.parameters);
     } else {
-        params[gadgets.io.RequestParameters.HEADERS] = {Authorization: OAuth.getAuthorizationHeader(message.parameters)};
+        OAuth.addToURL(URL, message.parameters);
+        // This would be better, but you can't get the headers from the response.
+        // params[gadgets.io.RequestParameters.HEADERS]
+        // = {Authorization: OAuth.getAuthorizationHeader(message.parameters)};
     }
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
     gadgets.io.makeRequest(URL, showResponse, params);
 
-    var client = new XMLHttpRequest();
-    client.onreadystatechange = handler;
+    // var client = new XMLHttpRequest();
+    // client.onreadystatechange = handler;
     // This will fail, indicating 'Access Denied':
     // client.open(message.method, message.action);
     // client.send();
@@ -121,6 +93,34 @@ function handler() {
         alert(this.getAllResponseHeaders());
         alert(this.responseText);
     }
+};
+function showResponse(response) {
+    var errors = response.errors;
+    if (errors != null && errors.length > 0) {
+        var msg = "";
+        for (var e in errors) {
+            msg += (e + ": " + errors[e] + "\n");
+        }
+        if (msg != "") {
+           alert(msg);
+        }
+    }
+    var headers = response.headers;
+    if (headers != null) {
+        var msg = "";
+        for (var h in headers) {
+            msg += (h + ": " + headers[h] + "\n");
+        }
+        if (msg != "") {
+           alert(msg);
+        }
+    }
+    var msg = "";
+    for (var f in response) {
+        msg += (f + ": " + response[f] + "\n");
+    }
+    alert(msg);
+    // alert(response.text); // The HTTP response body
 };
 var METHOD_TYPES = { 'GET'   : gadgets.io.MethodType.GET
                    , 'POST'  : gadgets.io.MethodType.POST

@@ -154,7 +154,7 @@ OAuth.setProperties(OAuth, // utility functions
         var nvps = form.split('&');
         for (var n = 0; n < nvps.length; ++n) {
             var nvp = nvps[n];
-            if (nvp == '') {
+            if (nvp == "") {
                 continue;
             }
             var equals = nvp.indexOf('=');
@@ -254,7 +254,10 @@ OAuth.setProperties(OAuth, // utility functions
         var list = OAuth.getParameterList(parameters);
         for (var p = 0; p < list.length; ++p) {
             var parameter = list[p];
-            header += ',' + OAuth.percentEncode(parameter[0]) + '="' + OAuth.percentEncode(parameter[1]) + '"';
+            var name = parameter[0];
+            if (name.indexOf("oauth_") == 0) {
+                header += ',' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
+            }
         }
         return header;
     }

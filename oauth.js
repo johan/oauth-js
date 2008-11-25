@@ -202,20 +202,22 @@ OAuth.setProperties(OAuth, // utility functions
         }
     }
 ,
-    /** Fill in parameters to help construct a request for an access token or a protected resource.
-        Don't use this function for a request for a request token; it sets the oauth_token parameter.
+    /** Fill in parameters to help construct a request message.
         This function doesn't fill in every parameter.
         The accessor object should be like:
         {consumerKey:'foo', consumerSecret:'bar', accessorSecret:'nurn', token:'krelm', tokenSecret:'blah'}
         The accessorSecret property is optional.
      */
     completeRequest: function completeRequest(message, accessor) {
+        if (message.method == null) {
+            message.method = "GET";
+        }
         var map = OAuth.getParameterMap(message.parameters);
         if (map.oauth_consumer_key == null) {
             OAuth.setParameter(message, "oauth_consumer_key", accessor.consumerKey || "");
         }
-        if (map.oauth_token == null) {
-            OAuth.setParameter(message, "oauth_token", accessor.token || "");
+        if (map.oauth_token == null && accessor.token != null) {
+            OAuth.setParameter(message, "oauth_token", accessor.token);
         }
         if (map.oauth_version == null) {
             OAuth.setParameter(message, "oauth_version", "1.0");

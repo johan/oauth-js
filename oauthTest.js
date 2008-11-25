@@ -53,8 +53,9 @@ function testGetParameters() {
     if (actual == null || actual != expected) {
         alert("getAuthorizationHeader\n" + expected + " != \n" + actual);
     }
-    var message = {method: 'PUT', action: 'http://localhost', parameters: {}};
+    var message = {action: 'http://localhost', parameters: {}};
     OAuth.completeRequest(message, {consumerKey: 'CK', token: 'T'});
+    assertMemberEquals(message, 'method', "GET");
     map = message.parameters;
     assertMemberEquals(map, 'oauth_consumer_key', 'CK');
     assertMemberEquals(map, 'oauth_token', 'T');

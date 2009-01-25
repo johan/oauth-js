@@ -1,0 +1,47 @@
+<html>
+<body> 
+<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+<script type="text/javascript">
+function newXMLHttpRequest() {
+    try{
+        return new XMLHttpRequest();
+    }catch (e){
+        try{
+            return new ActiveXObject("Msxml2.XMLHTTP");
+        }catch (e) {
+            try{
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            }catch (e){
+                alert("Your browser does not support AJAX!");
+                throw e;
+            }
+        }
+    }
+}
+function getRequestToken(url) {
+    var oauthRequest = {
+        method: "post", action: url
+      , parameters: [["scope", "http://www.google.com/m8/feeds/"]]
+    };
+    var requestBody = OAuth.formEncode(oauthRequest.parameters);
+    OAuth.completeRequest(oauthRequest, {consumerKey: "key", consumerSecret: "secret"});
+    var authorizationHeader = OAuth.getAuthorizationHeader("", oauthRequest.parameters);
+    var xmlHttp = newXMLHttpRequest();
+    xmlHttp.onreadystatechange=function(){
+        if (xmlHttp.readyState == 4) {
+            alert(xmlHttp.status+" "+xmlHttp.statusText
+                  +"\n"+xmlHttp.getAllResponseHeaders()
+                  +"\n"+xmlHttp.responseText);
+        }
+    }
+    xmlHttp.open(oauthRequest.method, oauthRequest.action, true); 
+    xmlHttp.setRequestHeader("Authorization", authorizationHeader);
+    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlHttp.send(requestBody);
+} 
+</script>
+<input type="button" value="term.ie"    onclick="getRequestToken('http://term.ie/oauth/example/request_token.php')"/>
+<input type="button" value="madgex.com" onclick="getRequestToken('http://echo.lab.madgex.com/request-token.ashx')"/>
+</body>
+</html>

@@ -1,8 +1,48 @@
 <html>
-<body> 
+<body>
+Here's a very simple example of using
+<a href="http://oauth.net/">OAuth</a> via
+<a href="http://www.w3.org/TR/XMLHttpRequest/">XMLHttpRequest</a>.
+Each of these buttons will request an OAuth request token, and
+display the resulting HTTP response in a popup window.
+<p>
+<input type="button" value="term.ie"    onclick="getRequestToken('http://term.ie/oauth/example/request_token.php')"/>
+<input type="button" value="madgex.com" onclick="getRequestToken('http://echo.lab.madgex.com/request-token.ashx')"/>
+<p>
+This won't work if you load this page from an HTTP server, because
+it attempts to send requests via XMLHttpRequest to term.ie or madgex.com.
+Most browsers forbid this for
+<a href="http://www.xml.com/pub/a/2005/11/09/fixing-ajax-xmlhttprequest-considered-harmful.html">security reasons</a>.
+To make it work, you can copy this page to a file and
+direct your browser to load from the file.
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
 <script type="text/javascript">
+function getRequestToken(url) {
+    var oauthRequest = {
+        method: "post", action: url
+      , parameters: [["scope", "http://www.google.com/m8/feeds/"]]
+    };
+    var requestBody = OAuth.formEncode(oauthRequest.parameters);
+    OAuth.completeRequest(oauthRequest, {consumerKey: "key", consumerSecret: "secret"});
+
+    // Coincidentally, madgex.com and term.ie both accept this consumer key and secret.
+    // In real life, the key and secret are different for each service provider.
+
+    var authorizationHeader = OAuth.getAuthorizationHeader("", oauthRequest.parameters);
+    var xmlHttp = newXMLHttpRequest();
+    xmlHttp.onreadystatechange=function(){
+        if (xmlHttp.readyState == 4) {
+            alert(xmlHttp.status+" "+xmlHttp.statusText
+                  +"\n"+xmlHttp.getAllResponseHeaders()
+                  +"\n"+xmlHttp.responseText);
+        }
+    }
+    xmlHttp.open(oauthRequest.method, oauthRequest.action, true); 
+    xmlHttp.setRequestHeader("Authorization", authorizationHeader);
+    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlHttp.send(requestBody);
+} 
 function newXMLHttpRequest() {
     try{
         return new XMLHttpRequest();
@@ -19,29 +59,6 @@ function newXMLHttpRequest() {
         }
     }
 }
-function getRequestToken(url) {
-    var oauthRequest = {
-        method: "post", action: url
-      , parameters: [["scope", "http://www.google.com/m8/feeds/"]]
-    };
-    var requestBody = OAuth.formEncode(oauthRequest.parameters);
-    OAuth.completeRequest(oauthRequest, {consumerKey: "key", consumerSecret: "secret"});
-    var authorizationHeader = OAuth.getAuthorizationHeader("", oauthRequest.parameters);
-    var xmlHttp = newXMLHttpRequest();
-    xmlHttp.onreadystatechange=function(){
-        if (xmlHttp.readyState == 4) {
-            alert(xmlHttp.status+" "+xmlHttp.statusText
-                  +"\n"+xmlHttp.getAllResponseHeaders()
-                  +"\n"+xmlHttp.responseText);
-        }
-    }
-    xmlHttp.open(oauthRequest.method, oauthRequest.action, true); 
-    xmlHttp.setRequestHeader("Authorization", authorizationHeader);
-    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xmlHttp.send(requestBody);
-} 
 </script>
-<input type="button" value="term.ie"    onclick="getRequestToken('http://term.ie/oauth/example/request_token.php')"/>
-<input type="button" value="madgex.com" onclick="getRequestToken('http://echo.lab.madgex.com/request-token.ashx')"/>
 </body>
 </html>

@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-// Here's some JavaScript software that's useful for implementing OAuth.
+/* Here's some JavaScript software for implementing OAuth.
+
+   This isn't as useful as you might hope.  OAuth is based around
+   allowing tools and websites to talk to each other.  However,
+   JavaScript running in web browsers is hampered by security
+   restrictions that prevent code running on one website from
+   accessing data stored or served on another.
+
+   Before you start hacking, make sure you understand the limitations
+   posed by cross-domain XMLHttpRequest.
+
+   On the bright side, some platforms use JavaScript as their
+   language, but enable the programmer to access other web sites.
+   Examples include Google Gadgets, and Microsoft Vista Sidebar.
+   For those platforms, this library should come in handy.
+*/
 
 // The HMAC-SHA1 signature method calls b64_hmac_sha1, defined by
 // http://pajhome.org.uk/crypt/md5/sha1.js

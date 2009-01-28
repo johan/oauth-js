@@ -18,9 +18,32 @@
 // The test data were copied from http://oauth.pbwiki.com/TestCases
 
 function testOAuth() {
+    testEncode();
     testGetParameters();
     testGetBaseString();
     testGetSignature();
+}
+
+var ENCODING // From http://wiki.oauth.net/TestCases
+  = [ ["abcABC123", "abcABC123"]
+    , ["-._~"     , "-._~"]
+    , ["%"        , "%25"]
+    , ["+"        , "%2B"]
+    , ["&=*"      , "%26%3D%2A"]
+    , ["!'()"     , "%21%27%28%29"]
+    , ["\n"       , "%0A"]
+    , [" "        , "%20"]
+    ];
+
+function testEncode() {
+    for (var i = 0; i < ENCODING.length; ++i) {
+        var input    = ENCODING[i][0];
+        var expected = ENCODING[i][1];
+        var actual = OAuth.percentEncode(input);
+        if (expected != actual) {
+            alert("OAuth.percentEncode(" + input + ") = " + actual);
+        }
+    }
 }
 
 function testGetParameters() {

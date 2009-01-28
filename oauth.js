@@ -74,11 +74,11 @@ OAuth.setProperties(OAuth, // utility functions
         // encodeURIComponent ignores: - _ . ! ~ * ' ( )
         // OAuth dictates the only ones you can ignore are: - _ . ~
         // Source: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Functions:encodeURIComponent
-        s = s.replace("!", "%21", "g");
-        s = s.replace("*", "%2A", "g");
-        s = s.replace("'", "%27", "g");
-        s = s.replace("(", "%28", "g");
-        s = s.replace(")", "%29", "g");
+        s = s.replace(/\!/g, "%21");
+        s = s.replace(/\*/g, "%2A");
+        s = s.replace(/\'/g, "%27");
+        s = s.replace(/\(/g, "%28");
+        s = s.replace(/\)/g, "%29");
         return s;
     }
 ,

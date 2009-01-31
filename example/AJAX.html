@@ -3,11 +3,11 @@
 Here's a very simple example of using
 <a href="http://oauth.net/">OAuth</a> via
 <a href="http://www.w3.org/TR/XMLHttpRequest/">XMLHttpRequest</a>.
-Each of these buttons will request an OAuth request token, and
-display the resulting HTTP response in a popup window.
+Each of these buttons will request OAuth tokens,
+and display the resulting HTTP responses in popup windows.
 <p>
-<input type="button" value="term.ie"    onclick="getRequestToken('http://term.ie/oauth/example/request_token.php')"/>
-<input type="button" value="madgex.com" onclick="getRequestToken('http://echo.lab.madgex.com/request-token.ashx')"/>
+<input type="button" value="term.ie"    onclick="getTokens('termie')"/>
+<input type="button" value="madgex.com" onclick="getTokens('madgex')"/>
 <p>
 This won't work if you load this page from an HTTP server, because
 it attempts to send requests via XMLHttpRequest to term.ie or madgex.com.
@@ -17,43 +17,62 @@ To make it work, you can copy this page to a file and
 direct your browser to load from the file.
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+<script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/example/consumer.js"></script>
 <script type="text/javascript">
-function getRequestToken(url) {
-    var oauthRequest = {
-        method: "post", action: url
+function getTokens(consumerName) {
+    var accessor = consumer[consumerName];
+    var message = {
+        method: "post", action: accessor.serviceProvider.requestTokenURL
       , parameters: [["scope", "http://www.google.com/m8/feeds/"]]
     };
-    var requestBody = OAuth.formEncode(oauthRequest.parameters);
-    OAuth.completeRequest(oauthRequest, {consumerKey: "key", consumerSecret: "secret"});
-
-    // Coincidentally, madgex.com and term.ie both accept this consumer key and secret.
-    // In real life, the key and secret are different for each service provider.
-
-    var authorizationHeader = OAuth.getAuthorizationHeader("", oauthRequest.parameters);
-    var xmlHttp = newXMLHttpRequest();
-    xmlHttp.onreadystatechange=function(){
-        if (xmlHttp.readyState == 4) {
-            alert(xmlHttp.status+" "+xmlHttp.statusText
-                  +"\n"+xmlHttp.getAllResponseHeaders()
-                  +"\n"+xmlHttp.responseText);
+    var requestBody = OAuth.formEncode(message.parameters);
+    OAuth.completeRequest(message, accessor);
+    var authorizationHeader = OAuth.getAuthorizationHeader("", message.parameters);
+    var requestToken = newXMLHttpRequest();
+    requestToken.onreadystatechange = function receiveRequestToken() {
+        if (requestToken.readyState == 4) {
+            var dump = requestToken.status+" "+requestToken.statusText
+                  +"\n"+requestToken.getAllResponseHeaders()
+                  +"\n"+requestToken.responseText;
+            if (confirm(dump)) {
+                var results = OAuth.decodeForm(requestToken.responseText);
+                message = {method: "post", action: accessor.serviceProvider.accessTokenURL};
+                OAuth.completeRequest(message,
+                    { consumerKey   : accessor.consumerKey
+                    , consumerSecret: accessor.consumerSecret
+                    , token         : OAuth.getParameter(results, "oauth_token")
+                    , tokenSecret   : OAuth.getParameter(results, "oauth_token_secret")
+                    });
+                var requestAccess = newXMLHttpRequest();
+                requestAccess.onreadystatechange = function receiveAccessToken() {
+                    if (requestAccess.readyState == 4) {
+                        alert(requestAccess.status+" "+requestAccess.statusText
+                              +"\n"+requestAccess.getAllResponseHeaders()
+                              +"\n"+requestAccess.responseText);
+                    }
+                };
+                requestAccess.open(message.method, message.action, true); 
+                requestAccess.setRequestHeader("Authorization", OAuth.getAuthorizationHeader("", message.parameters));
+                requestAccess.send();
+            }
         }
-    }
-    xmlHttp.open(oauthRequest.method, oauthRequest.action, true); 
-    xmlHttp.setRequestHeader("Authorization", authorizationHeader);
-    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xmlHttp.send(requestBody);
-} 
+    };
+    requestToken.open(message.method, message.action, true); 
+    requestToken.setRequestHeader("Authorization", authorizationHeader);
+    requestToken.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    requestToken.send(requestBody);
+}
 function newXMLHttpRequest() {
     try{
         return new XMLHttpRequest();
-    }catch (e){
+    } catch(e) {
         try{
             return new ActiveXObject("Msxml2.XMLHTTP");
-        }catch (e) {
+        } catch(e) {
             try{
                 return new ActiveXObject("Microsoft.XMLHTTP");
-            }catch (e){
-                alert("Your browser does not support AJAX!");
+            } catch(e) {
+                alert("Sorry, your browser doesn't support AJAX.");
                 throw e;
             }
         }

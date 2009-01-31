@@ -7,14 +7,15 @@ Each of these buttons will request OAuth tokens,
 and display the resulting HTTP responses in popup windows.
 <p>
 <input type="button" value="term.ie"    onclick="getTokens('termie')"/>
-<input type="button" value="madgex.com" onclick="getTokens('madgex')"/>
+<input type="button" value="madgex"     onclick="getTokens('madgex')"/>
+<input type="button" value="mediamatic" onclick="getTokens('mediamatic')"/>
 <p>
 This won't work if you load this page from an HTTP server, because
 it attempts to send requests via XMLHttpRequest to term.ie or madgex.com.
 Most browsers forbid this for
 <a href="http://www.xml.com/pub/a/2005/11/09/fixing-ajax-xmlhttprequest-considered-harmful.html">security reasons</a>.
-To make it work, you can copy this page to a file and
-direct your browser to load from the file.
+You can make it work with Microsoft Internet Explorer, if you
+copy this page to a file and direct your browser to load from the file.
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
 <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/example/consumer.js"></script>

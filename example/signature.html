@@ -20,9 +20,10 @@ function sign(form) {
         }
     }
     OAuth.SignatureMethod.sign(message, accessor);
-    showText("signatureBaseString", OAuth.SignatureMethod.getBaseString(message));
-    showText("signature"          , OAuth.getParameter(message.parameters, "oauth_signature"));
-    showText("authorizationHeader", OAuth.getAuthorizationHeader("", message.parameters));
+    showText("normalizedParameters", OAuth.SignatureMethod.normalizeParameters(message.parameters));
+    showText("signatureBaseString" , OAuth.SignatureMethod.getBaseString(message));
+    showText("signature"           , OAuth.getParameter(message.parameters, "oauth_signature"));
+    showText("authorizationHeader" , OAuth.getAuthorizationHeader("", message.parameters));
     return false;
 }
 function showText(elementId, text) {
@@ -67,9 +68,10 @@ fill in this form and click the 'Sign' button.
       <input type="reset"  value="Reset"/>
       <br/>
       <table border="2">
-        <tr valign="baseline"><th align="right">signature base string:</th><td><pre id="signatureBaseString">&nbsp;</pre></td></tr>
-        <tr valign="baseline"><th align="right">signature:            </th><td><pre id="signature">          &nbsp;</pre></td></tr>
-        <tr valign="baseline"><th align="right">Authorization header: </th><td><pre id="authorizationHeader">&nbsp;</pre></td></tr>
+        <tr valign="baseline"><th align="right">normalized parameters:</th><td><pre id="normalizedParameters">&nbsp;</pre></td></tr>
+        <tr valign="baseline"><th align="right">signature base string:</th><td><pre id="signatureBaseString"> &nbsp;</pre></td></tr>
+        <tr valign="baseline"><th align="right">signature:            </th><td><pre id="signature">           &nbsp;</pre></td></tr>
+        <tr valign="baseline"><th align="right">Authorization header: </th><td><pre id="authorizationHeader"> &nbsp;</pre></td></tr>
       </table>
     </form>
   </body>

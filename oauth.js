@@ -97,7 +97,14 @@ OAuth.setProperties(OAuth, // utility functions
         return s;
     }
 ,
-    decodePercent: decodeURIComponent
+    decodePercent: function decodePercent(s) {
+        if (s != null) {
+            // Handle application/x-www-form-urlencoded, which is defined by
+            // http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1
+            s = s.replace(/\+/g, " ");
+        }
+        return decodeURIComponent(s);
+    }
 ,
     /** Convert the given parameters to an Array of name-value pairs. */
     getParameterList: function getParameterList(parameters) {

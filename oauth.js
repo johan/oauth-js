@@ -470,22 +470,27 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         if (parameters == null) {
             return "";
         }
-        var norm = [];
         var list = OAuth.getParameterList(parameters);
+        var sortable = [];
         for (var p = 0; p < list.length; ++p) {
             var nvp = list[p];
             if (nvp[0] != "oauth_signature") {
-                norm.push(nvp);
+                sortable.push([ OAuth.percentEncode(nvp[0])
+                              + " " // because it comes before any character that can appear in a percentEncoded string.
+                              + OAuth.percentEncode(nvp[1])
+                              , nvp]);
             }
         }
-        norm.sort(function(a,b) {
-                      if (a[0] < b[0]) return -1;
-                      if (a[0] > b[0]) return 1;
-                      if (a[1] < b[1]) return  -1;
-                      if (a[1] > b[1]) return 1;
-                      return 0;
-                  });
-        return OAuth.formEncode(norm);
+        sortable.sort(function(a,b) {
+                          if (a[0] < b[0]) return  -1;
+                          if (a[0] > b[0]) return 1;
+                          return 0;
+                      });
+        var sorted = [];
+        for (var s = 0; s < sortable.length; ++s) {
+            sorted.push(sortable[s][1]);
+        }
+        return OAuth.formEncode(sorted);
     }
 });
 

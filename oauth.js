@@ -92,7 +92,7 @@ OAuth.setProperties(OAuth, // utility functions
             var e = "";
             for (var i = 0; i < s.length; ++s) {
                 if (e != "") e += '&';
-                e += percentEncode(s[i]);
+                e += OAuth.percentEncode(s[i]);
             }
             return e;
         }

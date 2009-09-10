@@ -59,6 +59,18 @@
    The browser encodes each value before transmitting it. For example,
    see consumer.setInputs in example/consumer.js.
  */
+
+/* This script needs to know what time it is. By default, it uses the local
+   clock (new Date), which is apt to be inaccurate in browsers. To do
+   better, you can load this script from a URL whose query string contains
+   an oauth_timestamp parameter, whose value is a current Unix timestamp.
+   For example, when generating the enclosing document using PHP:
+
+   <script src="oauth.js?oauth_timestamp=<?=time()?>" ...
+
+   Another option is to call OAuth.correctTimestamp with a Unix timestamp.
+ */
+
 var OAuth; if (OAuth == null) OAuth = {};
 
 OAuth.setProperties = function setProperties(into, from) {
@@ -112,7 +124,7 @@ OAuth.setProperties(OAuth, // utility functions
             return [];
         }
         if (typeof parameters != "object") {
-            return decodeForm(parameters + "");
+            return OAuth.decodeForm(parameters + "");
         }
         if (parameters instanceof Array) {
             return parameters;
@@ -130,7 +142,7 @@ OAuth.setProperties(OAuth, // utility functions
             return {};
         }
         if (typeof parameters != "object") {
-            return getParameterMap(decodeForm(parameters + ""));
+            return getParameterMap(OAuth.decodeForm(parameters + ""));
         }
         if (parameters instanceof Array) {
             var map = {};
@@ -286,9 +298,32 @@ OAuth.setProperties(OAuth, // utility functions
         return header;
     }
 ,
+    /** Correct the time using a parameter from the URL from which the last script was loaded. */
+    correctTimestampFromSrc: function correctTimestampFromSrc(parameterName) {
+        parameterName = parameterName || "oauth_timestamp";
+        var scripts = document.getElementsByTagName('script');
+        if (scripts == null || !scripts.length) return;
+        var src = scripts[scripts.length-1].src;
+        if (!src) return;
+        var q = src.indexOf("?");
+        if (q < 0) return;
+        parameters = OAuth.getParameterMap(OAuth.decodeForm(src.substring(q+1)));
+        var t = parameters[parameterName];
+        if (t == null) return;
+        OAuth.correctTimestamp(t);
+    }
+,
+    /** Generate timestamps starting with the given value. */
+    correctTimestamp: function correctTimestamp(timestamp) {
+        OAuth.timeCorrectionMsec = (timestamp * 1000) - (new Date()).getTime();
+    }
+,
+    /** The difference between the correct time and my clock. */
+    timeCorrectionMsec: 0
+,
     timestamp: function timestamp() {
-        var d = new Date();
-        return Math.floor(d.getTime()/1000);
+        var t = (new Date()).getTime() + OAuth.timeCorrectionMsec;
+        return Math.floor(t / 1000);
     }
 ,
     nonce: function nonce(length) {
@@ -404,7 +439,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         var superClass = OAuth.SignatureMethod;
         var subClass = function() {
             superClass.call(this);
-        }; 
+        };
         subClass.prototype = new superClass();
         // Delete instance variables from prototype:
         // delete subclass.prototype... There aren't any.
@@ -509,3 +544,5 @@ OAuth.SignatureMethod.registerMethodClass(["HMAC-SHA1", "HMAC-SHA1-Accessor"],
             return signature;
         }
     ));
+
+OAuth.correctTimestampFromSrc();

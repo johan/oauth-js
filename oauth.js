@@ -142,7 +142,7 @@ OAuth.setProperties(OAuth, // utility functions
             return {};
         }
         if (typeof parameters != "object") {
-            return getParameterMap(OAuth.decodeForm(parameters + ""));
+            return OAuth.getParameterMap(OAuth.decodeForm(parameters + ""));
         }
         if (parameters instanceof Array) {
             var map = {};

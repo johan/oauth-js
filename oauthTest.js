@@ -109,6 +109,10 @@ var BASES = //
     { "simple"         : ["GET", "http://example.com/", {n: "v"}, "GET&http%3A%2F%2Fexample.com%2F&n%3Dv" ]
     , "no path"        : ["GET", "http://example.com" , {n: "v"}, "GET&http%3A%2F%2Fexample.com%2F&n%3Dv" ]
     , "sorting"        : ["GET", "http://example.com/", [["n", "AB"], ["n", "{}"]], "GET&http%3A%2F%2Fexample.com%2F&n%3D%257B%257D%26n%3DAB" ]
+//  , "username in URL": ["GET", "http://U:PW@Example.COM"   , null, "GET&http%3A%2F%2FU%3APW%40example.com%2F&" ]
+    , "capitalized URL": ["GET", "HtTp://Example.CoM/A/b/C"  , null, "GET&http%3A%2F%2Fexample.com%2FA%2Fb%2FC&" ]
+    , "@ in URL"       : ["GET", "http://example.com/A@B/C"  , null, "GET&http%3A%2F%2Fexample.com%2FA%40B%2FC&" ]
+    , "punctuated URL" : ["GET", "http://example.com/a;b,c#d", null, "GET&http%3A%2F%2Fexample.com%2Fa%3Bb%2Cc&" ]
     , "OAuth A request": ["POST", "https://photos.example.net/request_token",
             { oauth_version: "1.0", oauth_consumer_key: "dpf43f3p2l4k3l03"
             , oauth_timestamp: "1191242090", oauth_nonce: "hsu94j3884jdopsl"
